@@ -96,8 +96,7 @@ public class FragmentViewModel extends AndroidViewModel {
             SaveRequest saveRequest = new SaveRequest();
 
             saveRequest.code = CloudFavouritesHelper.getLocalCode();
-            ArrayList<String> digests = new ArrayList<>(databaseRepository.getFavourites());
-            saveRequest.digests = digests;
+            saveRequest.digests = new ArrayList<>(databaseRepository.getFavourites());
 
             Gson gson = new Gson();
             return gson.toJson(saveRequest);
