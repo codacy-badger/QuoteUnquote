@@ -56,9 +56,9 @@ public class CloudFavouritesHelper {
     }
 
     public static String receiveRequest(final String remoteCode) {
-        final ReceiveRequest receiveRequest = new ReceiveRequest();
-        receiveRequest.code = remoteCode;
+        final RequestReceive requestReceive = new RequestReceive();
+        requestReceive.code = remoteCode;
         final Gson gson = new Gson();
-        return gson.toJson(receiveRequest);
+        return gson.toJson(requestReceive);
     }
 }

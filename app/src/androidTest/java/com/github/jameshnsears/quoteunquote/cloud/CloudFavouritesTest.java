@@ -64,12 +64,12 @@ public class CloudFavouritesTest {
 
     @Test
     public void assert04ReceiveUnknownCode() {
-        final ReceiveRequest receiveRequest = new ReceiveRequest();
-        receiveRequest.code = "dcb9pNXX9e";
+        final RequestReceive requestReceive = new RequestReceive();
+        requestReceive.code = "dcb9pNXX9e";
 
         final List<String> digests = cloudFavourites.receive(
                 CloudFavourites.TIMEOUT,
-                gson.toJson(receiveRequest));
+                gson.toJson(requestReceive));
         assertEquals("",0, digests.size());
     }
 
@@ -89,22 +89,22 @@ public class CloudFavouritesTest {
     }
 
     private String getRequestSave() {
-        final SaveRequest saveRequest = new SaveRequest();
+        final RequestSave requestSave = new RequestSave();
 
-        saveRequest.code = "4EXRqu8N68";
+        requestSave.code = "4EXRqu8N68";
 
         final ArrayList<String> digests = new ArrayList<>();
         digests.add("d0");
         digests.add("d1");
-        saveRequest.digests = digests;
+        requestSave.digests = digests;
 
-        return gson.toJson(saveRequest);
+        return gson.toJson(requestSave);
     }
 
     private static String getRequestReceive() {
-        final ReceiveRequest receiveRequest = new ReceiveRequest();
-        receiveRequest.code = "4EXRqu8N68";
+        final RequestReceive requestReceive = new RequestReceive();
+        requestReceive.code = "4EXRqu8N68";
         final Gson gson = new Gson();
-        return gson.toJson(receiveRequest);
+        return gson.toJson(requestReceive);
     }
 }

@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.github.jameshnsears.quoteunquote.BuildConfig;
 import com.github.jameshnsears.quoteunquote.cloud.CloudFavouritesHelper;
-import com.github.jameshnsears.quoteunquote.cloud.SaveRequest;
+import com.github.jameshnsears.quoteunquote.cloud.RequestSave;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.quotation.AuthorPOJO;
 import com.google.gson.Gson;
@@ -93,13 +93,12 @@ public class FragmentViewModel extends AndroidViewModel {
     public String getSavePayload() {
         final Future<String> future = executorService.submit(() -> {
 
-            SaveRequest saveRequest = new SaveRequest();
-
-            saveRequest.code = CloudFavouritesHelper.getLocalCode();
-            saveRequest.digests = new ArrayList<>(databaseRepository.getFavourites());
+            RequestSave requestSave = new RequestSave();
+            requestSave.code = CloudFavouritesHelper.getLocalCode();
+            requestSave.digests = new ArrayList<>(databaseRepository.getFavourites());
 
             Gson gson = new Gson();
-            return gson.toJson(saveRequest);
+            return gson.toJson(requestSave);
         });
 
         try {
