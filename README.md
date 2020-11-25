@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/jameshnsears/QuoteUnquote/workflows/Build/badge.svg)
 
-[![Coverage Status](https://coveralls.io/repos/github/jameshnsears/QuoteUnquote/badge.svg?branch=buttons)](https://coveralls.io/github/jameshnsears/QuoteUnquote?branch=buttons)
+[![Coverage Status](https://coveralls.io/repos/github/jameshnsears/QuoteUnquote/badge.svg?branch=development)](https://coveralls.io/github/jameshnsears/QuoteUnquote?branch=development)
 
 [![GitHub Super-Linter](https://github.com/jameshnsears/quoteunquote/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bf868d627f754d1ea58be6fd22ac62b1)](https://app.codacy.com/manual/jameshnsears/brexitsoundboard?utm_source=github.com&utm_medium=referral&utm_content=jameshnsears/brexitsoundboard&utm_campaign=Badge_Grade_Dashboard)
