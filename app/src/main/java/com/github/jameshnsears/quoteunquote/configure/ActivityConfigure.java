@@ -24,8 +24,8 @@ import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
 import timber.log.Timber;
 
 
-public final class ActivityConfigure extends AppCompatActivity {
-    private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+public class ActivityConfigure extends AppCompatActivity {
+    protected int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
     protected void onPause() {
@@ -89,7 +89,7 @@ public final class ActivityConfigure extends AppCompatActivity {
     }
 
     @Override
-    public void onCreate(final Bundle bundle) {
+    public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
         final Intent intent = getIntent();
@@ -100,9 +100,13 @@ public final class ActivityConfigure extends AppCompatActivity {
         }
 
         if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
+            Timber.d("AppWidgetManager.INVALID_APPWIDGET_ID");
         }
 
+        createFragments();
+    }
+
+    private void createFragments() {
         AuditEventHelper.createInstance(getApplication(), BuildConfig.APPCENTER_KEY);
 
         this.setTitle(getString(R.string.activity_configure_title));
@@ -116,5 +120,10 @@ public final class ActivityConfigure extends AppCompatActivity {
         fragmentTransaction.commit();
 
         setContentView(R.layout.activity_configure);
+    }
+
+    public int t() {
+        Timber.d("t");
+        return 1;
     }
 }

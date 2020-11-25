@@ -3,7 +3,7 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.event
 import android.os.Build
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.jameshnsears.quoteunquote.configure.fragment.ShadowLoggingBase
+import com.github.jameshnsears.quoteunquote.configure.fragment.FragmentShadowLogging
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
 import org.junit.Assert.assertFalse
@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
-class FragmentEventTest : ShadowLoggingBase() {
+class FragmentEventTest : FragmentShadowLogging() {
     class FragmentEventDouble : FragmentEvent {
         constructor() : super(1)
     }
