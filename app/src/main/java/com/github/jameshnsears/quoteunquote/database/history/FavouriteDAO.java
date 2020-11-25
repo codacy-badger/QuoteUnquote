@@ -1,10 +1,11 @@
 package com.github.jameshnsears.quoteunquote.database.history;
 
-import java.util.List;
-
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import java.util.List;
+
 import io.reactivex.Single;
 
 @Dao

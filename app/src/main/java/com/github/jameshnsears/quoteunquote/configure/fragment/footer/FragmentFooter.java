@@ -15,12 +15,10 @@ import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
 
 
 public final class FragmentFooter extends FragmentCommon {
-    private static final String LOG_TAG = FragmentFooter.class.getSimpleName();
-
     private FragmentFooterBinding fragmentFooterBinding;
 
     private FragmentFooter(final int widgetId) {
-        super(LOG_TAG, widgetId);
+        super(widgetId);
     }
 
     public static FragmentFooter newInstance(final int widgetId) {

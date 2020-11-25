@@ -14,22 +14,22 @@
         <FrameLayout
             android:id="@+id/fragmentPlaceholderAppearance"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/fragmentPlaceholderContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/fragmentPlaceholderEvent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/fragmentPlaceholderFooter"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 </ScrollView>
 

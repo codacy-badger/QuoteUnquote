@@ -3,7 +3,6 @@ package com.github.jameshnsears.quoteunquote.database
 import org.junit.Assert.fail
 import org.junit.Test
 import org.slf4j.LoggerFactory
-import java.util.*
 
 class RandomIndexTest {
     private val logger = LoggerFactory.getLogger(RandomIndexTest::class.java)
@@ -20,7 +19,7 @@ class RandomIndexTest {
         stringList.add("5")
 
         for (i in stringList.indices) {
-            val rndIndex = databaseRepository.geRandomIndex(stringList)
+            val rndIndex = databaseRepository.getRandomIndex(stringList)
             logger.debug("" + rndIndex)
             if (rndIndex < 0 || rndIndex > stringList.size) {
                 fail("")

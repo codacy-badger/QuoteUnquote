@@ -14,7 +14,7 @@ cd ..
 #
 # app/build/reports/tests/testDebugUnitTest/index.html
 # app/build/reports/androidTests/connected/index.html
-./gradlew testDebugUnitTest connectedDebugAndroidTest
+./gradlew testGoogleplayDebugUnitTest connectedGoogleplayDebugAndroidTest
 
 ####################
 
@@ -26,9 +26,16 @@ cd ..
 
 ####################
 
-# app/build/reports/pmd-results.html
 # app/build/reports/lint-results.html
-./gradlew lint pmd
+./gradlew lint
+
+####################
+
+# ./gradlew ktlintformat
+./gradlew ktlint
+
+# ./gradlew detektBaseline
+./gradlew detekt
 
 ####################
 

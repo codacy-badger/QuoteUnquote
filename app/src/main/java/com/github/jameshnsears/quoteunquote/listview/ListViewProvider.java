@@ -5,57 +5,55 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteModel;
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteWidget;
+import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.PreferenceAppearance;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
-    private static final String LOG_TAG = ListViewProvider.class.getSimpleName();
+import timber.log.Timber;
 
+class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
     private final List<String> quotationList = new ArrayList<>();
     private final Context context;
-    public Preferences preferences;
-    private int widgetId;
+    private final int widgetId;
+    private final QuoteUnquoteWidget quoteUnquoteWidget;
+    public PreferenceAppearance preferenceAppearance;
+    public PreferenceContent preferenceContent;
     private QuotationEntity quotationEntity;
-    private QuoteUnquoteWidget quoteUnquoteWidget;
 
-    public ListViewProvider(final Context context, final Intent intent) {
-        Log.d(LOG_TAG, "ListViewProvider");
-        this.context = context;
+    ListViewProvider(final Context serviceContext, final Intent intent) {
+        this.context = serviceContext;
         this.widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
 
-        preferences = new Preferences(widgetId, context);
+        preferenceAppearance = new PreferenceAppearance(widgetId, serviceContext);
+        preferenceContent = new PreferenceContent(widgetId, serviceContext);
+
         quoteUnquoteWidget = new QuoteUnquoteWidget();
     }
 
     @Override
     public void onCreate() {
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
 
         synchronized (this) {
             quotationList.clear();
 
             quotationEntity = getQuoteUnquoteModel(context).getNext(
                     widgetId,
-                    preferences.getSelectedContentType());
+                    preferenceContent.getContentSelection());
 
             if (quotationEntity != null) {
                 quotationList.add(quotationEntity.theQuotation());
@@ -63,15 +61,13 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
         }
     }
 
-    public QuoteUnquoteModel getQuoteUnquoteModel(final Context context) {
-        return quoteUnquoteWidget.getQuoteUnquoteModelInstance(context);
+    public QuoteUnquoteModel getQuoteUnquoteModel(final Context listViewContext) {
+        return quoteUnquoteWidget.getQuoteUnquoteModelInstance(listViewContext);
     }
 
     @Override
     public void onDestroy() {
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
     }
 
     @Override
@@ -104,17 +100,13 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
                 remoteViews.setTextViewTextSize(
                         android.R.id.text1,
                         TypedValue.COMPLEX_UNIT_DIP,
-                        (float) this.preferences.getSharedPreferenceInt(Preferences.FRAGMENT_APPEARANCE, Preferences.SPINNER_SIZE));
+                        (float) this.preferenceAppearance.getAppearanceTextSize());
 
                 remoteViews.setTextColor(
                         android.R.id.text1,
-                        Color.parseColor(this.preferences.getSharedPreferenceString(
-                                Preferences.FRAGMENT_APPEARANCE, Preferences.SPINNER_COLOUR)));
+                        Color.parseColor(this.preferenceAppearance.getAppearanceTextColour()));
 
-                Log.d(LOG_TAG, String.format("%d: %s: digest=%s", widgetId,
-                        new Object() {
-                        }.getClass().getEnclosingMethod().getName(),
-                        quotationEntity.digest));
+                Timber.d("%d: digest=%s", widgetId, quotationEntity.digest);
 
                 if (getQuoteUnquoteModel(context).isReported(widgetId)) {
                     remoteViews.setInt(android.R.id.text1, "setPaintFlags",

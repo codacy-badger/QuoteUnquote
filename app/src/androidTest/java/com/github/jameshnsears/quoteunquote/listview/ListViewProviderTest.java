@@ -4,14 +4,14 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.jameshnsears.quoteunquote.DatabaseTestHelper;
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
+import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.PreferenceAppearance;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -25,16 +25,16 @@ public class ListViewProviderTest extends DatabaseTestHelper {
         insertTestDataSet01();
 
         final Intent intent = new Intent();
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, WIDGET_ID);
 
         final Context mockContext = mock(Context.class);
 
         final ListViewProvider listViewProviderSpy = spy(new ListViewProvider(mockContext, intent));
         doReturn(this.quoteUnquoteModel).when(listViewProviderSpy).getQuoteUnquoteModel(mockContext);
 
-        final Preferences preferencesSpy = spy(new Preferences(-1, mockContext));
-        doReturn(ContentType.ALL).when(preferencesSpy).getSelectedContentType();
-        listViewProviderSpy.preferences = preferencesSpy;
+        final PreferenceAppearance preferenceAppearanceSpy = spy(new PreferenceAppearance(-1, mockContext));
+        doReturn(ContentSelection.ALL).when(preferenceAppearanceSpy).getSelectedContentType();
+        listViewProviderSpy.preferenceContent = preferenceAppearanceSpy;
 
         listViewProviderSpy.onCreate();
         assertEquals("", 0, listViewProviderSpy.getCount());

@@ -7,21 +7,17 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
-import com.github.jameshnsears.quoteunquote.utils.ToastHelper;
 
 import androidx.annotation.Nullable;
 
-public class CloudServiceSend extends Service {
-    private static final String LOG_TAG = CloudServiceSend.class.getSimpleName();
+import com.github.jameshnsears.quoteunquote.R;
+import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 
-    protected Handler handler = new Handler(Looper.getMainLooper());
+public final class CloudServiceSend extends Service {
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
-    public static boolean isRunning(Context context) {
+    public static boolean isRunning(final Context context) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
         for (final ActivityManager.RunningServiceInfo runningServiceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
@@ -34,19 +30,11 @@ public class CloudServiceSend extends Service {
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(final Intent intent) {
         return null;
     }
 
-    @Override
-    public void onDestroy() {
-        Log.d(LOG_TAG, String.format("%s", new Object() {
-        }.getClass().getEnclosingMethod().getName()));
-
-        super.onDestroy();
-    }
-
-    private void showNoNetworkToast(Context context) {
+    private void showNoNetworkToast(final Context context) {
         handler.post(() -> ToastHelper.makeToast(
                 context,
                 context.getString(R.string.fragment_content_favourites_share_comms),
@@ -54,10 +42,7 @@ public class CloudServiceSend extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOG_TAG, String.format("%s", new Object() {
-        }.getClass().getEnclosingMethod().getName()));
-
+    public int onStartCommand(final Intent intent, final int flags, final int startId) {
         new Thread(() -> {
             final Context context = CloudServiceSend.this.getApplicationContext();
 
@@ -80,7 +65,7 @@ public class CloudServiceSend extends Service {
                                 Toast.LENGTH_LONG));
 
                         CloudFavouritesHelper.auditFavourites(
-                                AuditEventHelper.FAVOURITE_SEND,
+                                "FAVOURITE_SEND",
                                 intent.getStringExtra("localCodeValue"));
                     } else {
                         showNoNetworkToast(context);

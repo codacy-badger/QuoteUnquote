@@ -1,0 +1,17 @@
+package com.github.jameshnsears.quoteunquote.audit;
+
+import android.app.Application;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+import timber.log.Timber;
+
+public final class AuditEventHelper {
+    public static synchronized void createInstance(final Application application, final String appCenterKey) {
+        Timber.d("not implemented");
+    }
+
+    public static void auditEvent(final String auditEvent, final ConcurrentHashMap<String, String> properties) {
+        Timber.d("not implemented");
+    }
+}

@@ -3,6 +3,9 @@ package com.github.jameshnsears.quoteunquote.configure;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.jameshnsears.quoteunquote.BuildConfig;
 import com.github.jameshnsears.quoteunquote.R;
 import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.FragmentAppearance;
@@ -14,9 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.ActivityTestRule;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,8 +24,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class ActivityConfigureTest {
     @Rule
-    public ActivityTestRule<ActivityConfigure> activityRule =
-            new ActivityTestRule(ActivityConfigure.class);
+    public ActivityScenarioRule activityRule = new ActivityScenarioRule(ActivityConfigure.class);
 
     private ActivityConfigure activityConfigure;
 
@@ -42,10 +41,17 @@ public class ActivityConfigureTest {
         final FragmentAppearance fragmentAppearance = (FragmentAppearance)
                 activityConfigure.getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderAppearance);
 
-        assertEquals("", 0, fragmentAppearance.fragmentAppearanceBinding.seekBarTransparency.getProgress());
+        assertEquals("", 2, fragmentAppearance.fragmentAppearanceBinding.seekBarTransparency.getProgress());
         assertEquals("", 15, fragmentAppearance.fragmentAppearanceBinding.spinnerColour.getAdapter().getCount());
         assertEquals("", 8, fragmentAppearance.fragmentAppearanceBinding.spinnerSize.getAdapter().getCount());
-        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.checkBoxDisplayToolbar.isChecked());
+        assertFalse("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchFirst.isChecked());
+        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchPrevious.isChecked());
+        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchReport.isChecked());
+        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchToggleFavourite.isChecked());
+        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchShare.isChecked());
+        assertTrue("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchNextRandom.isChecked());
+        assertFalse("", fragmentAppearance.fragmentAppearanceBinding.toolbarSwitchNextSequential.isChecked());
+
     }
 
     @Test
@@ -62,9 +68,9 @@ public class ActivityConfigureTest {
             assertEquals("", "Text Search: 0", fragmentContent.fragmentContentBinding.radioButtonKeywords.getText().toString());
         } else {
             assertEquals("", "All Quotations: 7", fragmentContent.fragmentContentBinding.radioButtonAll.getText().toString());
-            assertEquals("", "Author: 5", fragmentContent.fragmentContentBinding.radioButtonAuthor.getText().toString());
+            assertEquals("", "Author: 1", fragmentContent.fragmentContentBinding.radioButtonAuthor.getText().toString());
             assertEquals("", "Favourites: 0", fragmentContent.fragmentContentBinding.radioButtonFavourites.getText().toString());
-            assertEquals("", "Text Search: 0", fragmentContent.fragmentContentBinding.radioButtonKeywords.getText().toString());
+            assertEquals("", "Search: 0", fragmentContent.fragmentContentBinding.radioButtonKeywords.getText().toString());
         }
         assertTrue("", fragmentContent.fragmentContentBinding.radioButtonAll.isChecked());
         assertFalse("", fragmentContent.fragmentContentBinding.radioButtonAuthor.isChecked());
@@ -92,6 +98,11 @@ public class ActivityConfigureTest {
 
         fragmentContent.fragmentContentBinding.radioButtonAuthor.setEnabled(true);
         Thread.sleep(250);
-        assertEquals("", "/r/quotes/top", fragmentContent.fragmentContentBinding.spinnerAuthors.getAdapter().getItem(0).toString());
+
+        if (BuildConfig.USE_PROD_DB) {
+            assertEquals("", "/r/quotes/top", fragmentContent.fragmentContentBinding.spinnerAuthors.getAdapter().getItem(0).toString());
+        } else {
+            assertEquals("", "a1", fragmentContent.fragmentContentBinding.spinnerAuthors.getAdapter().getItem(0).toString());
+        }
     }
 }

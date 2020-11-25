@@ -1,0 +1,34 @@
+name: fdroid
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    # macos has GPU for connectedGoogleplayDebugAndroidTest emulator
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [24, 29]
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: prep env.
+        run: |
+          set -x
+          pwd
+          touch local.properties
+          echo "$GOOGLE_SERVICES" | base64 --decode > app/google-services.json
+          ls -al
+
+      - name: test + androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: default
+          script: ./gradlew testFdroidDebugUnitTest connectedFdroidDebugAndroidTest --stacktrace

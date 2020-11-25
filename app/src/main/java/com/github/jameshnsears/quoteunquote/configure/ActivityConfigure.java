@@ -3,43 +3,43 @@ package com.github.jameshnsears.quoteunquote.configure;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
-import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.FragmentAppearance;
-import com.github.jameshnsears.quoteunquote.configure.fragment.content.FragmentContent;
-import com.github.jameshnsears.quoteunquote.configure.fragment.event.FragmentEvent;
-import com.github.jameshnsears.quoteunquote.configure.fragment.footer.FragmentFooter;
-import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
-import com.github.jameshnsears.quoteunquote.utils.ToastHelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.github.jameshnsears.quoteunquote.BuildConfig;
+import com.github.jameshnsears.quoteunquote.R;
+import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.FragmentAppearance;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.FragmentContent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.event.FragmentEvent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.footer.FragmentFooter;
+import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
+import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
 
-public class ActivityConfigure extends AppCompatActivity {
-    private static final String LOG_TAG = ActivityConfigure.class.getSimpleName();
+import timber.log.Timber;
 
+
+public final class ActivityConfigure extends AppCompatActivity {
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
     protected void onPause() {
-        super.onPause();
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
 
         finishActivity();
+
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         ToastHelper.toast = null;
+        super.onDestroy();
     }
 
     private void finishActivity() {
@@ -47,9 +47,7 @@ public class ActivityConfigure extends AppCompatActivity {
                 getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderContent);
 
         if (isQuotationTextEmpty(fragmentContent)) {
-            final Preferences preferences = new Preferences(widgetId, getApplicationContext());
-            preferences.setSharedPreference(Preferences.FRAGMENT_CONTENT, Preferences.RADIO_BUTTON_ALL, true);
-            preferences.setSharedPreference(Preferences.FRAGMENT_CONTENT, Preferences.RADIO_BUTTON_QUOTATION_TEXT, false);
+            resetContentSelection();
         }
 
         sendBroadcast(IntentFactoryHelper.createIntentAction(
@@ -61,9 +59,7 @@ public class ActivityConfigure extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
 
         final FragmentContent fragmentContent = (FragmentContent)
                 getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderContent);
@@ -72,20 +68,23 @@ public class ActivityConfigure extends AppCompatActivity {
             warnUserAboutQuotationText();
             fragmentContent.fragmentContentBinding.radioButtonAll.setChecked(true);
 
-            final Preferences preferences = new Preferences(widgetId, getApplicationContext());
-            preferences.setSharedPreference(Preferences.FRAGMENT_CONTENT, Preferences.RADIO_BUTTON_ALL, true);
-            preferences.setSharedPreference(Preferences.FRAGMENT_CONTENT, Preferences.RADIO_BUTTON_QUOTATION_TEXT, false);
+            resetContentSelection();
         } else {
             finishActivity();
         }
     }
 
+    private void resetContentSelection() {
+        final PreferenceContent preferenceContent = new PreferenceContent(widgetId, getApplicationContext());
+        preferenceContent.setContentSelection(ContentSelection.ALL);
+    }
+
     private void warnUserAboutQuotationText() {
-        ToastHelper.makeToast(this, this.getString(R.string.fragment_content_text_no_search_results), Toast.LENGTH_SHORT);
+        ToastHelper.makeToast(this, this.getString(R.string.fragment_content_text_no_search_results), Toast.LENGTH_LONG);
     }
 
     private boolean isQuotationTextEmpty(final FragmentContent fragmentContent) {
-        return fragmentContent.fragmentContentBinding.radioButtonKeywords.isChecked()
+        return fragmentContent.fragmentContentBinding.radioButtonSearch.isChecked()
                 && fragmentContent.countKeywords == 0;
     }
 
@@ -104,7 +103,7 @@ public class ActivityConfigure extends AppCompatActivity {
             finish();
         }
 
-        AuditEventHelper.createInstance(getApplication());
+        AuditEventHelper.createInstance(getApplication(), BuildConfig.APPCENTER_KEY);
 
         this.setTitle(getString(R.string.activity_configure_title));
 

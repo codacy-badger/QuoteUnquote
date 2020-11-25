@@ -1,12 +1,12 @@
 package com.github.jameshnsears.quoteunquote.database;
 
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 public class NoNextQuotationAvailableException extends Exception {
-    public final ContentType contentType;
+    public final ContentSelection contentSelection;
 
-    public NoNextQuotationAvailableException(final ContentType contentType) {
-        super("NoNextQuotationAvailableException: " + contentType.toString());
-        this.contentType = contentType;
+    public NoNextQuotationAvailableException(final ContentSelection theContentSelection) {
+        super("NoNextQuotationAvailableException: " + theContentSelection.toString());
+        this.contentSelection = theContentSelection;
     }
 }

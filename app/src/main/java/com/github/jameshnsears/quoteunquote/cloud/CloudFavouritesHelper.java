@@ -3,9 +3,8 @@ package com.github.jameshnsears.quoteunquote.cloud;
 import android.content.Context;
 
 import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
 import com.google.gson.Gson;
-import com.microsoft.appcenter.Flags;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,18 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CloudFavouritesHelper {
     private static String localCode;
 
-    public static void setSharedPreferenceLocalCode(final Context context) {
-        final Preferences preferences = new Preferences(0, context);
-        preferences.setSharedPreferenceLocalCode(CloudFavouritesHelper.getLocalCode());
-    }
+    public static String getLocalCode(final Context context) {
+        final PreferenceContent preferenceContent = new PreferenceContent(0, context);
 
-    public static String getSharedPreferenceLocalCode(final Context context) {
-        final Preferences preferences = new Preferences(0, context);
-        String localCode = preferences.getSharedPreferenceLocalCode();
-
-        if ("".equals(localCode)) {
-            preferences.setSharedPreferenceLocalCode(CloudFavouritesHelper.getLocalCode());
-            localCode = preferences.getSharedPreferenceLocalCode();
+        if ("".equals(preferenceContent.getContentFavouritesLocalCode())) {
+            preferenceContent.setContentFavouritesLocalCode(CloudFavouritesHelper.getLocalCode());
+            localCode = preferenceContent.getContentFavouritesLocalCode();
         }
 
         return localCode;
@@ -37,7 +30,7 @@ public class CloudFavouritesHelper {
     public static void auditFavourites(final String auditEvent, final String code) {
         final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
         properties.put("code", code);
-        AuditEventHelper.auditAppCenter(auditEvent, properties, Flags.NORMAL);
+        AuditEventHelper.auditEvent(auditEvent, properties);
     }
 
     public static synchronized String getLocalCode() {
@@ -47,6 +40,11 @@ public class CloudFavouritesHelper {
             localCode = rootCode + crc.substring(0, 2);
         }
         return localCode;
+    }
+
+    public static void setLocalCode(final Context context) {
+        final PreferenceContent preferenceContent = new PreferenceContent(0, context);
+        preferenceContent.setContentFavouritesLocalCode(CloudFavouritesHelper.getLocalCode());
     }
 
     public static boolean isRemoteCodeValid(final String remoteCode) {

@@ -15,13 +15,15 @@ public class IntentFactoryHelper {
     public static final String ACTIVITY_FINISHED_REPORT = "ACTIVITY_FINISHED_REPORT";
 
     public static final String TOOLBAR_PRESSED_FIRST = "TOOLBAR_PRESSED_FIRST";
+    public static final String TOOLBAR_PRESSED_PREVIOUS = "TOOLBAR_PRESSED_PREVIOUS";
     public static final String TOOLBAR_PRESSED_FAVOURITE = "TOOLBAR_PRESSED_FAVOURITE";
     public static final String TOOLBAR_PRESSED_SHARE = "TOOLBAR_PRESSED_SHARE";
-    public static final String TOOLBAR_PRESSED_NEXT = "TOOLBAR_PRESSED_NEXT";
+    public static final String TOOLBAR_PRESSED_NEXT_RANDOM = "TOOLBAR_PRESSED_NEXT_RANDOM";
+    public static final String TOOLBAR_PRESSED_NEXT_SEQUENTIAL = "TOOLBAR_PRESSED_NEXT_SEQUENTIAL";
 
     public static final String DAILY_ALARM = "DAILY_ALARM";
 
-    private static SecureRandom secureRandom = new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     public static Intent createIntent(final int widgetId) {
         final Intent resultValue = new Intent();
@@ -58,7 +60,7 @@ public class IntentFactoryHelper {
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
 
         // support widgetId being sent to correct Widget instance!
-        intent.setData(Uri.fromParts("content", String.valueOf(secureRandom.nextInt()), null));
+        intent.setData(Uri.fromParts("content", String.valueOf(SECURE_RANDOM.nextInt()), null));
 
         return intent;
     }

@@ -6,44 +6,40 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteWidget;
 import com.github.jameshnsears.quoteunquote.R;
 import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.databinding.ActivityReportBinding;
+import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
-import com.github.jameshnsears.quoteunquote.utils.ToastHelper;
-import com.microsoft.appcenter.Flags;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.appcompat.app.AppCompatActivity;
+import timber.log.Timber;
 
-public class ActivityReport extends AppCompatActivity {
-    private static final String LOG_TAG = ActivityReport.class.getSimpleName();
-
+public final class ActivityReport extends AppCompatActivity {
     private ActivityReportBinding activityReportBinding;
     private QuoteUnquoteWidget quoteUnquoteWidget;
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
     protected void onPause() {
-        super.onPause();
         finish();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
-        Log.d(LOG_TAG, String.format("%d: %s", widgetId,
-                new Object() {
-                }.getClass().getEnclosingMethod().getName()));
+        Timber.d("widgetId=%d", widgetId);
 
         activityReportBinding = null;
 
@@ -89,7 +85,7 @@ public class ActivityReport extends AppCompatActivity {
         activityReportBinding.cancelButton.setOnClickListener(view1 -> finish());
 
         activityReportBinding.buttonOK.setOnClickListener(view1 -> {
-            AuditEventHelper.auditAppCenter(AuditEventHelper.REPORT, getAuditProperties(), Flags.CRITICAL);
+            AuditEventHelper.auditEvent("REPORT", getAuditProperties());
 
             quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).markAsReported(widgetId);
 
@@ -109,24 +105,21 @@ public class ActivityReport extends AppCompatActivity {
     public ConcurrentHashMap<String, String> getAuditProperties() {
         final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
 
-        final Preferences preferences = new Preferences(widgetId, getApplicationContext());
-        final QuotationEntity quotationToReport = quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).getNext(widgetId, preferences.getSelectedContentType());
+        final PreferenceContent preferenceContent = new PreferenceContent(widgetId, getApplicationContext());
+        final QuotationEntity quotationToReport
+                = quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).getNext(widgetId, preferenceContent.getContentSelection());
 
-        final StringBuilder auditMessage = new StringBuilder(200);
-        auditMessage
-                .append("digest=")
-                .append(quotationToReport.digest)
-                .append("; author=")
-                .append(quotationToReport.author)
-                .append("; reason=")
-                .append(activityReportBinding.spinnerReason.getSelectedItem().toString())
-                .append("; notes=")
-                .append(activityReportBinding.editTextNotes.getText().toString());
-
-        properties.put("Report", auditMessage.toString());
+        properties.put("Report", "digest="
+                + quotationToReport.digest
+                + "; author="
+                + quotationToReport.author
+                + "; reason="
+                + activityReportBinding.spinnerReason.getSelectedItem().toString()
+                + "; notes="
+                + activityReportBinding.editTextNotes.getText().toString());
 
         for (final Map.Entry<String, String> entry : properties.entrySet()) {
-            Log.d(LOG_TAG, entry.getKey() + ":" + entry.getValue());
+            Timber.d(entry.getKey() + ":" + entry.getValue());
         }
 
         return properties;

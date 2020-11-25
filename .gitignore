@@ -1,19 +1,21 @@
+app/schemas/com.github.jameshnsears.quoteunquote.database.history.HistoryDatabase/1.json
+app/schemas/com.github.jameshnsears.quoteunquote.database.quotation.QuotationDatabase/1.json
 /build
 /captures
+/config/keystore.jks
 .DS_Store
 .externalNativeBuild
 .gradle
-!/.idea/
-/.idea/
 /.idea/assetWizardSettings.xml
 /.idea/caches
+/.idea/compiler.xml
 /.idea/libraries
 /.idea/modules.xml
 /.idea/navEditor.xml
+/.idea/qaplug_profiles.xml
+/.idea/sonarlint/
 /.idea/workspace.xml
 *.iml
 /local.properties
-/.idea/sonarlint/
-/config/keystore.jks
-app/schemas/com.github.jameshnsears.quoteunquote.database.history.HistoryDatabase/1.json
-app/schemas/com.github.jameshnsears.quoteunquote.database.quotation.QuotationDatabase/1.json
+/Quote, Unquote.vpp.bak_*
+/utilsLibrary/coverage-error.log

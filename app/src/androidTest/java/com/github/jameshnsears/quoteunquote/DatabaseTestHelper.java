@@ -1,9 +1,13 @@
 package com.github.jameshnsears.quoteunquote;
 
+import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.test.core.app.ApplicationProvider;
+
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.history.AbstractHistoryDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,20 +16,14 @@ import org.junit.Rule;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.test.core.app.ApplicationProvider;
-
 import static org.junit.Assert.assertEquals;
 
 public class DatabaseTestHelper {
+    protected static final int WIDGET_ID = 1;
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
-
     @Rule
     public CountingTaskExecutorRule countingTaskExecutorRule = new CountingTaskExecutorRule();
-
-    protected static int widgetID = 1;
     protected QuoteUnquoteModelFake quoteUnquoteModel;
 
     @Before
@@ -83,14 +81,14 @@ public class DatabaseTestHelper {
     }
 
     protected void setDefaultQuotation() {
-        quoteUnquoteModel.setDefaultQuotation(widgetID);
+        quoteUnquoteModel.setDefaultQuotation(WIDGET_ID);
 
         assertEquals(DatabaseRepository.DEFAULT_QUOTATION_DIGEST,
                 quoteUnquoteModel.getNext(
-                        widgetID, ContentType.ALL).digest);
+                        WIDGET_ID, ContentSelection.ALL).digest);
 
         assertEquals(
                 1,
-                quoteUnquoteModel.countPrevious(widgetID, ContentType.ALL));
+                quoteUnquoteModel.countPrevious(WIDGET_ID, ContentSelection.ALL));
     }
 }

@@ -3,7 +3,7 @@ package com.github.jameshnsears.quoteunquote;
 import android.content.Context;
 
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepositoryFake;
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 import org.mockito.Mockito;
 
@@ -30,8 +30,8 @@ public class QuoteUnquoteModelFake extends QuoteUnquoteModel {
         return getDatabaseRepositoryFake().countReported();
     }
 
-    public List<String> getPrevious(final int widgetId, final ContentType contentType) {
-        return databaseRepository.getPrevious(widgetId, contentType);
+    public List<String> getPrevious(final int widgetId, final ContentSelection contentSelection) {
+        return databaseRepository.getPrevious(widgetId, contentSelection);
     }
 
     public List<String> getFavourites() {
@@ -44,7 +44,7 @@ public class QuoteUnquoteModelFake extends QuoteUnquoteModel {
     }
 
     @Override
-    public ContentType getSelectedContentType(final int widgetId) {
-        return ContentType.ALL;
+    public ContentSelection getSelectedContentType(final int widgetId) {
+        return ContentSelection.ALL;
     }
 }

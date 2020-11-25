@@ -2,6 +2,8 @@ package com.github.jameshnsears.quoteunquote.cloud;
 
 import android.util.Log;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.Gson;
 
 import org.junit.After;
@@ -14,8 +16,6 @@ import org.junit.runners.MethodSorters;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,10 +24,15 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CloudFavouritesTest {
     private static final String LOG_TAG = CloudFavouritesTest.class.getSimpleName();
-
+    private final Gson gson = new Gson();
     private CloudFavourites cloudFavourites;
 
-    private final Gson gson = new Gson();
+    private static String getRequestReceive() {
+        final RequestReceive requestReceive = new RequestReceive();
+        requestReceive.code = "4EXRqu8N68";
+        final Gson gson = new Gson();
+        return gson.toJson(requestReceive);
+    }
 
     @Before
     public void setUp() {
@@ -70,7 +75,7 @@ public class CloudFavouritesTest {
         final List<String> digests = cloudFavourites.receive(
                 CloudFavourites.TIMEOUT,
                 gson.toJson(requestReceive));
-        assertEquals("",0, digests.size());
+        assertEquals("", 0, digests.size());
     }
 
     @Test
@@ -79,13 +84,13 @@ public class CloudFavouritesTest {
         final List<String> actual = cloudFavourites.receive(
                 30,
                 getRequestReceive());
-        assertEquals("",2, actual.size());
+        assertEquals("", 2, actual.size());
 
         final ArrayList<String> expected = new ArrayList<>();
         expected.add("d0");
         expected.add("d1");
 
-        assertEquals("",expected, actual);
+        assertEquals("", expected, actual);
     }
 
     private String getRequestSave() {
@@ -99,12 +104,5 @@ public class CloudFavouritesTest {
         requestSave.digests = digests;
 
         return gson.toJson(requestSave);
-    }
-
-    private static String getRequestReceive() {
-        final RequestReceive requestReceive = new RequestReceive();
-        requestReceive.code = "4EXRqu8N68";
-        final Gson gson = new Gson();
-        return gson.toJson(requestReceive);
     }
 }

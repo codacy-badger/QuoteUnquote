@@ -2,6 +2,9 @@ package com.github.jameshnsears.quoteunquote.report;
 
 import android.widget.Spinner;
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.jameshnsears.quoteunquote.DatabaseTestHelper;
 import com.github.jameshnsears.quoteunquote.R;
 
@@ -12,19 +15,15 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.ActivityTestRule;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class ActivityReportTest extends DatabaseTestHelper {
     @Rule
-    public ActivityTestRule<ActivityReport> activityRule =
-            new ActivityTestRule(ActivityReport.class);
+    public ActivityScenarioRule activityRule = new ActivityScenarioRule(ActivityReport.class);
 
     @Test
     public void reportQuotation() {
@@ -32,13 +31,17 @@ public class ActivityReportTest extends DatabaseTestHelper {
 
         setDefaultQuotation();
 
-        quoteUnquoteModel.markAsReported(widgetID);
+        quoteUnquoteModel.markAsReported(WIDGET_ID);
 
-        assertTrue("", quoteUnquoteModel.isReported(widgetID));
+        assertTrue("", quoteUnquoteModel.isReported(WIDGET_ID));
     }
 
     @Test
     public void itemsInSpinner() {
+        // TODO move to roboelectric + kt?
+        // https://developer.android.com/guide/components/activities/testing
+
+        // https://medium.com/stepstone-tech/better-tests-with-androidxs-activityscenario-in-kotlin-part-1-6a6376b713ea
         final Spinner spinnerReason = activityRule.getActivity().findViewById(R.id.spinnerReason);
         assertThat("", spinnerReason.getAdapter().getCount(), Is.is(6));
     }

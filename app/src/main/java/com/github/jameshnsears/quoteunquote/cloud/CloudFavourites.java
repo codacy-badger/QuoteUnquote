@@ -1,7 +1,5 @@
 package com.github.jameshnsears.quoteunquote.cloud;
 
-import android.util.Log;
-
 import com.github.jameshnsears.quoteunquote.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,10 +25,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import timber.log.Timber;
 
-public class CloudFavourites {
+public final class CloudFavourites {
     public static final int TIMEOUT = 10;
-    private static final String LOG_TAG = CloudFavourites.class.getSimpleName();
     private static final String DNS = "8.8.8.8";
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -40,7 +38,7 @@ public class CloudFavourites {
 
     public boolean save(final String payload) {
         final String endpointSave = BuildConfig.REMOTE_DEVICE_ENDPOINT + "/save";
-        Log.d(LOG_TAG, String.format("endpointSave=%s; payload=%s", endpointSave, payload));
+        Timber.d("endpointSave=%s; payload=%s", endpointSave, payload);
 
         final Future<Boolean> future = executorService.submit(() -> {
 
@@ -60,15 +58,14 @@ public class CloudFavourites {
             try {
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
-                        Log.e(LOG_TAG, request.toString());
+                        Timber.d(request.toString());
                         return false;
                     }
 
-                    Log.d(LOG_TAG, "response.body=" + response.body().string());
+                    Timber.d("response.body=%s", response.body().string());
                     return true;
                 }
             } catch (SocketTimeoutException e) {
-                Log.w(LOG_TAG, e.getMessage());
                 return false;
             }
         });
@@ -76,7 +73,7 @@ public class CloudFavourites {
         try {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
-            Log.w(LOG_TAG, e.toString());
+            Timber.w(e.toString());
             Thread.currentThread().interrupt();
             return false;
         }
@@ -84,7 +81,7 @@ public class CloudFavourites {
 
     public List<String> receive(final int timeout, final String payload) {
         final String endpointLoad = BuildConfig.REMOTE_DEVICE_ENDPOINT + "/receive";
-        Log.d(LOG_TAG, String.format("endpointLoad=%s; payload=%s", endpointLoad, payload));
+        Timber.d("endpointLoad=%s; payload=%s", endpointLoad, payload);
 
         final Request request = new Request.Builder()
                 .url(endpointLoad)
@@ -106,14 +103,14 @@ public class CloudFavourites {
 
                 final Headers responseHeaders = response.headers();
                 for (int i = 0; i < responseHeaders.size(); i++) {
-                    Log.d(LOG_TAG, "header=" + responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    Timber.d("header=" + responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
             }
 
             @Override
             public void onFailure(final Call call, final IOException ioException) {
                 super.completeExceptionally(ioException);
-                Log.e(LOG_TAG, ioException.toString());
+                Timber.e(ioException.toString());
             }
         }
 
@@ -124,13 +121,13 @@ public class CloudFavourites {
 
             response = future.get();
             final String responseBody = escapeResponse(response.body().string());
-            Log.d(LOG_TAG, "response.body=" + responseBody);
+            Timber.d("response.body=%s", responseBody);
 
             final Gson gson = new Gson();
             return gson.fromJson(responseBody, new TypeToken<List<String>>() {
             }.getType());
         } catch (ExecutionException | InterruptedException | IOException e) {
-            Log.w(LOG_TAG, e.toString());
+            Timber.w(e.toString());
             Thread.currentThread().interrupt();
         } finally {
             if (response != null) {
@@ -154,10 +151,10 @@ public class CloudFavourites {
                 socket.connect(new InetSocketAddress(DNS, 53), 1500);
                 socket.close();
 
-                Log.d(LOG_TAG, "isInternetAvailable=true");
+                Timber.d("isInternetAvailable=true");
                 return true;
             } catch (IOException e) {
-                Log.d(LOG_TAG, "isInternetAvailable=false");
+                Timber.d("isInternetAvailable=false");
                 return false;
             }
         });
@@ -165,7 +162,7 @@ public class CloudFavourites {
         try {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
-            Log.w(LOG_TAG, e.toString());
+            Timber.w(e.toString());
             Thread.currentThread().interrupt();
             return false;
         }

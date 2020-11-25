@@ -10,16 +10,13 @@ import android.widget.TimePicker;
 
 import com.github.jameshnsears.quoteunquote.configure.fragment.FragmentCommon;
 import com.github.jameshnsears.quoteunquote.databinding.FragmentEventBinding;
-import com.github.jameshnsears.quoteunquote.utils.Preferences;
 
-
-public final class FragmentEvent extends FragmentCommon {
-    private static final String LOG_TAG = FragmentEvent.class.getSimpleName();
-
+public class FragmentEvent extends FragmentCommon {
     public FragmentEventBinding fragmentEventBinding;
+    public PreferenceEvent preferenceEvent;
 
-    private FragmentEvent(final int widgetId) {
-        super(LOG_TAG, widgetId);
+    protected FragmentEvent(final int widgetId) {
+        super(widgetId);
     }
 
     public static FragmentEvent newInstance(final int widgetId) {
@@ -31,6 +28,8 @@ public final class FragmentEvent extends FragmentCommon {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
+        preferenceEvent = new PreferenceEvent(this.widgetId, this.getContext());
+
         fragmentEventBinding = FragmentEventBinding.inflate(getLayoutInflater());
         return fragmentEventBinding.getRoot();
     }
@@ -43,55 +42,43 @@ public final class FragmentEvent extends FragmentCommon {
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        setCheckBoxDeviceUnlockViaPreference();
-        setCheckBoxDailyAtViaSharedPreference();
-        setTimePickerViaSharedPreference();
+        setDeviceUnlock();
+        setDaily();
+        setDailyTime();
 
-        createCheckBoxDeviceUnlockListener();
-        createCheckBoxDailyAtListener();
-        createTimePickerListener();
+        createListenerDeviceUnlock();
+        createListenerDaily();
+        createListenerDailyTime();
     }
 
-    private void setCheckBoxDailyAtViaSharedPreference() {
-        final boolean booleanDailyAt = preferences.getSharedPreferenceBoolean(
-                Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DAILY_AT);
+    private void setDaily() {
+        final boolean booleanDaily = preferenceEvent.getEventDaily();
+        //preferenceEvent.setEventDaily(booleanDaily);
 
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DAILY_AT, booleanDailyAt);
-
-        final CheckBox checkBoxDailyAt = fragmentEventBinding.checkBoxDailyAt;
-        checkBoxDailyAt.setChecked(booleanDailyAt);
+        fragmentEventBinding.checkBoxDailyAt.setChecked(booleanDaily);
 
         final TimePicker timePicker = fragmentEventBinding.timePickerDailyAt;
 
         timePicker.setEnabled(false);
-        if (booleanDailyAt) {
+        if (booleanDaily) {
             timePicker.setEnabled(true);
         }
     }
 
-    private void setCheckBoxDeviceUnlockViaPreference() {
-        final boolean booleanDeviceUnlock = preferences.getSharedPreferenceBoolean(
-                Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DEVICE_UNLOCK);
-
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DEVICE_UNLOCK, booleanDeviceUnlock);
-
-        final CheckBox checkBoxDeviceUnlock = fragmentEventBinding.checkBoxDeviceUnlock;
-        checkBoxDeviceUnlock.setChecked(booleanDeviceUnlock);
+    private void setDeviceUnlock() {
+        fragmentEventBinding.checkBoxDeviceUnlock.setChecked(preferenceEvent.getEventDeviceUnlock());
     }
 
-    private void createCheckBoxDeviceUnlockListener() {
+    private void createListenerDeviceUnlock() {
         final CheckBox checkBoxDeviceUnlock = fragmentEventBinding.checkBoxDeviceUnlock;
-        checkBoxDeviceUnlock.setOnCheckedChangeListener((buttonView, isChecked) -> preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DEVICE_UNLOCK, isChecked));
+        checkBoxDeviceUnlock.setOnCheckedChangeListener((buttonView, isChecked) ->
+                preferenceEvent.setEventDeviceUnlock(isChecked));
     }
 
-    private void createCheckBoxDailyAtListener() {
+    private void createListenerDaily() {
         final CheckBox checkBoxDailyAt = fragmentEventBinding.checkBoxDailyAt;
         checkBoxDailyAt.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            preferences.setSharedPreference(
-                    Preferences.FRAGMENT_EVENT, Preferences.CHECK_BOX_DAILY_AT, isChecked);
+            preferenceEvent.setEventDaily(isChecked);
 
             final TimePicker timePicker = fragmentEventBinding.timePickerDailyAt;
 
@@ -102,42 +89,34 @@ public final class FragmentEvent extends FragmentCommon {
         });
     }
 
-    private void createTimePickerListener() {
+    private void createListenerDailyTime() {
         final TimePicker timePicker = fragmentEventBinding.timePickerDailyAt;
-        timePicker.setOnTimeChangedListener((view1, hourOfDay, minute) -> saveSharedPreferenceTimePicker(timePicker.getHour(), timePicker.getMinute()));
+        timePicker.setOnTimeChangedListener((view1, hourOfDay, minute)
+                        -> {
+                    preferenceEvent.setEventDailyTimeHour(timePicker.getHour());
+                    preferenceEvent.setEventDailyTimeMinute(timePicker.getMinute());
+                }
+
+        );
     }
 
-    private void saveSharedPreferenceTimePicker(final int hourOfDay, final int minute) {
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_HOUR, hourOfDay);
-
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_MINUTE, minute);
-    }
-
-    private void setTimePickerViaSharedPreference() {
+    protected void setDailyTime() {
         final TimePicker timePicker = fragmentEventBinding.timePickerDailyAt;
 
-        final int hourOfDay = preferences.getSharedPreferenceInt(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_HOUR);
+        final int hourOfDay = preferenceEvent.getEventDailyTimeHour();
         if (hourOfDay == -1) {
+            preferenceEvent.setEventDailyTimeHour(6);
             timePicker.setHour(6);
-        } else {
-            timePicker.setHour(hourOfDay);
         }
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_HOUR, hourOfDay);
 
-        final int minute = preferences.getSharedPreferenceInt(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_MINUTE);
+        final int minute = preferenceEvent.getEventDailyTimeMinute();
         if (minute == -1) {
+            preferenceEvent.setEventDailyTimeMinute(0);
             timePicker.setMinute(0);
-        } else {
-            timePicker.setMinute(minute);
         }
-        preferences.setSharedPreference(
-                Preferences.FRAGMENT_EVENT, Preferences.TIME_PICKER_MINUTE, minute);
 
+        timePicker.setHour(hourOfDay);
+        timePicker.setMinute(minute);
         timePicker.setIs24HourView(false);
     }
 }

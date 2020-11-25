@@ -2,11 +2,11 @@ package com.github.jameshnsears.quoteunquote.database.quotation;
 
 import android.content.Context;
 
-import com.github.jameshnsears.quoteunquote.BuildConfig;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+
+import com.github.jameshnsears.quoteunquote.BuildConfig;
 
 @Database(
         entities = {QuotationEntity.class},

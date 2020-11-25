@@ -1,8 +1,10 @@
 package com.github.jameshnsears.quoteunquote;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.jameshnsears.quoteunquote.database.NoNextQuotationAvailableException;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +12,6 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,24 +29,24 @@ public class FavouriteButtonPressedTest extends DatabaseTestHelper {
         setDefaultQuotation();
 
         final QuoteUnquoteModelFake quoteUnquoteModelSpy = spy(quoteUnquoteModel);
-        doReturn(false).when(quoteUnquoteModelSpy).isRadioButtonFavouriteSelected(eq(widgetID));
+        doReturn(false).when(quoteUnquoteModelSpy).isRadioButtonFavouriteSelected(eq(WIDGET_ID));
 
         assertEquals(
                 "",
                 0,
-                quoteUnquoteModelSpy.countPrevious(widgetID, ContentType.FAVOURITES));
+                quoteUnquoteModelSpy.countPrevious(WIDGET_ID, ContentSelection.FAVOURITES));
 
         assertEquals(
                 "",
                 Integer.valueOf(0),
                 quoteUnquoteModelSpy.countFavourites().blockingGet());
 
-        final QuotationEntity nextQuotation = quoteUnquoteModelSpy.getNext(widgetID, ContentType.ALL);
+        final QuotationEntity nextQuotation = quoteUnquoteModelSpy.getNext(WIDGET_ID, ContentSelection.ALL);
 
-        assertFalse("", quoteUnquoteModelSpy.isFavourite(widgetID, nextQuotation.digest));
+        assertFalse("", quoteUnquoteModelSpy.isFavourite(WIDGET_ID, nextQuotation.digest));
 
         // make a favourite
-        quoteUnquoteModelSpy.toggleFavourite(widgetID, nextQuotation.digest);
+        quoteUnquoteModelSpy.toggleFavourite(WIDGET_ID, nextQuotation.digest);
 
         assertEquals(
                 "",
@@ -55,11 +55,11 @@ public class FavouriteButtonPressedTest extends DatabaseTestHelper {
 
         assertTrue(
                 "",
-                quoteUnquoteModelSpy.isFavourite(widgetID,
-                    quoteUnquoteModelSpy.getNext(widgetID, ContentType.ALL).digest));
+                quoteUnquoteModelSpy.isFavourite(WIDGET_ID,
+                        quoteUnquoteModelSpy.getNext(WIDGET_ID, ContentSelection.ALL).digest));
 
         // remove the favourite, but mark as a previous
-        quoteUnquoteModelSpy.toggleFavourite(widgetID, nextQuotation.digest);
+        quoteUnquoteModelSpy.toggleFavourite(WIDGET_ID, nextQuotation.digest);
 
         assertEquals(
                 "",
@@ -69,12 +69,12 @@ public class FavouriteButtonPressedTest extends DatabaseTestHelper {
         assertEquals(
                 "",
                 0,
-                quoteUnquoteModelSpy.countPrevious(widgetID, ContentType.FAVOURITES));
+                quoteUnquoteModelSpy.countPrevious(WIDGET_ID, ContentSelection.FAVOURITES));
 
         assertEquals(
                 "",
                 1,
-                quoteUnquoteModelSpy.countPrevious(widgetID, ContentType.ALL));
+                quoteUnquoteModelSpy.countPrevious(WIDGET_ID, ContentSelection.ALL));
     }
 
     @Test
@@ -85,11 +85,11 @@ public class FavouriteButtonPressedTest extends DatabaseTestHelper {
         final List<String> expectedDigestsList = new ArrayList<>();
 
         // make a favourite
-        quoteUnquoteModel.setNext(widgetID, ContentType.ALL);
+        quoteUnquoteModel.setNext(WIDGET_ID, ContentSelection.ALL, false);
         quoteUnquoteModel.toggleFavourite(
-                widgetID,
-                quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
-        expectedDigestsList.add(quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
+                WIDGET_ID,
+                quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
+        expectedDigestsList.add(quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
 
         assertEquals(
                 "",
@@ -97,21 +97,21 @@ public class FavouriteButtonPressedTest extends DatabaseTestHelper {
                 quoteUnquoteModel.countFavourites().blockingGet());
 
         // make a favourite
-        quoteUnquoteModel.setNext(widgetID, ContentType.ALL);
+        quoteUnquoteModel.setNext(WIDGET_ID, ContentSelection.ALL, false);
         quoteUnquoteModel.toggleFavourite(
-                widgetID,
-                quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
-        expectedDigestsList.add(quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
+                WIDGET_ID,
+                quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
+        expectedDigestsList.add(quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
 
         // don't make a favourite
-        quoteUnquoteModel.setNext(widgetID, ContentType.ALL);
+        quoteUnquoteModel.setNext(WIDGET_ID, ContentSelection.ALL, false);
 
         // make a favourite
-        quoteUnquoteModel.setNext(widgetID, ContentType.ALL);
+        quoteUnquoteModel.setNext(WIDGET_ID, ContentSelection.ALL, false);
         quoteUnquoteModel.toggleFavourite(
-                widgetID,
-                quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
-        expectedDigestsList.add(quoteUnquoteModel.getNext(widgetID, ContentType.ALL).digest);
+                WIDGET_ID,
+                quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
+        expectedDigestsList.add(quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
 
         assertEquals(
                 "",

@@ -7,40 +7,33 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
 import com.github.jameshnsears.quoteunquote.configure.fragment.content.FragmentContent;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
-import com.github.jameshnsears.quoteunquote.utils.ToastHelper;
+import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 
 import java.util.List;
 
-public class CloudServiceReceive extends Service {
-    private static final String LOG_TAG = CloudServiceReceive.class.getSimpleName();
-
+public final class CloudServiceReceive extends Service {
     private final IBinder binder = new LocalBinder();
 
-    protected Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(final Intent intent) {
         return binder;
     }
 
-    private void showNoNetworkToast(Context context) {
+    private void showNoNetworkToast(final Context context) {
         handler.post(() -> ToastHelper.makeToast(
                 context,
                 context.getString(R.string.fragment_content_favourites_share_comms),
                 Toast.LENGTH_SHORT));
     }
 
-    public void receive(FragmentContent fragmentContent, String remoteCodeValue) {
-        Log.d(LOG_TAG, String.format("%s", new Object() {
-        }.getClass().getEnclosingMethod().getName()));
-
+    public void receive(final FragmentContent fragmentContent, final String remoteCodeValue) {
         new Thread(() -> {
             final Context context = CloudServiceReceive.this.getApplicationContext();
 
@@ -70,13 +63,11 @@ public class CloudServiceReceive extends Service {
                         favouritesReceived.forEach(databaseRepository::markAsFavourite);
 
                         if (fragmentContent != null) {
-                            fragmentContent.setCountFavourites();
-                            fragmentContent.enableFavouriteReceiveButton(true);
+                            fragmentContent.setFavouriteCount();
+                            fragmentContent.enableFavouriteButtonReceive(true);
                         }
 
-                        CloudFavouritesHelper.auditFavourites(
-                                AuditEventHelper.FAVOURITE_RECEIVE,
-                                remoteCodeValue);
+                        CloudFavouritesHelper.auditFavourites("FAVOURITE_RECEIVE", remoteCodeValue);
                     }
                 }
             } finally {

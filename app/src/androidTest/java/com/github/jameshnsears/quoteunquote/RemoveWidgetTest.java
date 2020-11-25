@@ -1,11 +1,11 @@
 package com.github.jameshnsears.quoteunquote;
 
-import com.github.jameshnsears.quoteunquote.utils.ContentType;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,7 +23,7 @@ public class RemoveWidgetTest extends DatabaseTestHelper {
         quoteUnquoteModel.setDefaultQuotation(1);
 
         quoteUnquoteModel.toggleFavourite(
-                1, quoteUnquoteModel.getNext(1, ContentType.ALL).digest);
+                1, quoteUnquoteModel.getNext(1, ContentSelection.ALL).digest);
 
         quoteUnquoteModel.markAsReported(1);
 
@@ -32,19 +32,19 @@ public class RemoveWidgetTest extends DatabaseTestHelper {
         final QuoteUnquoteModelFake quoteUnquoteModelSpy = spy(quoteUnquoteModel);
         doReturn(false).when(quoteUnquoteModelSpy).isRadioButtonFavouriteSelected(eq(2));
         quoteUnquoteModelSpy.toggleFavourite(
-                2, quoteUnquoteModel.getNext(1, ContentType.ALL).digest);
+                2, quoteUnquoteModel.getNext(1, ContentSelection.ALL).digest);
 
         quoteUnquoteModel.markAsReported(2);
 
         assertEquals(
                 "",
                 1,
-                quoteUnquoteModel.countPrevious(1, ContentType.ALL));
+                quoteUnquoteModel.countPrevious(1, ContentSelection.ALL));
 
         assertEquals(
                 "",
                 1,
-                quoteUnquoteModel.countPrevious(2, ContentType.ALL));
+                quoteUnquoteModel.countPrevious(2, ContentSelection.ALL));
 
         assertEquals(
                 "",
@@ -57,7 +57,7 @@ public class RemoveWidgetTest extends DatabaseTestHelper {
                 quoteUnquoteModel.countReported().intValue());
 
         quoteUnquoteModelSpy.toggleFavourite(
-                2, quoteUnquoteModel.getNext(1, ContentType.ALL).digest);
+                2, quoteUnquoteModel.getNext(1, ContentSelection.ALL).digest);
         assertEquals(
                 "",
                 1,
@@ -70,7 +70,7 @@ public class RemoveWidgetTest extends DatabaseTestHelper {
         assertEquals(
                 "",
                 0,
-                quoteUnquoteModel.countPrevious(1, ContentType.ALL));
+                quoteUnquoteModel.countPrevious(1, ContentSelection.ALL));
 
         assertEquals(
                 "",
@@ -89,7 +89,7 @@ public class RemoveWidgetTest extends DatabaseTestHelper {
         assertEquals(
                 "",
                 0,
-                quoteUnquoteModel.countPrevious(2, ContentType.ALL));
+                quoteUnquoteModel.countPrevious(2, ContentSelection.ALL));
 
         assertEquals(
                 "",

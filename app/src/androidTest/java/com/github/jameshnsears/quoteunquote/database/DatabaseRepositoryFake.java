@@ -2,6 +2,9 @@ package com.github.jameshnsears.quoteunquote.database;
 
 import android.util.Log;
 
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
+
 import com.github.jameshnsears.quoteunquote.database.history.AbstractHistoryDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.AbstractQuotationDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
@@ -12,11 +15,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import androidx.room.Room;
-import androidx.test.core.app.ApplicationProvider;
 import io.reactivex.Single;
 
-public class DatabaseRepositoryFake extends DatabaseRepository {
+public final class DatabaseRepositoryFake extends DatabaseRepository {
     private static final String LOG_TAG = DatabaseRepositoryFake.class.getSimpleName();
 
     public DatabaseRepositoryFake() {

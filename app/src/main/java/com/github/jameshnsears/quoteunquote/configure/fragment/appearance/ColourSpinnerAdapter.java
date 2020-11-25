@@ -19,10 +19,11 @@ class ColourSpinnerAdapter extends BaseAdapter {
     private final List<String> colours;
     private final Context context;
 
-    public ColourSpinnerAdapter(final Context context) {
-        this.context = context;
+    ColourSpinnerAdapter(final Context activityContext) {
+        super();
+        this.context = activityContext;
         colours = new ArrayList<>();
-        colours.addAll(Arrays.asList(context.getResources().getStringArray(R.array.fragment_appearance_colour_array)));
+        colours.addAll(Arrays.asList(activityContext.getResources().getStringArray(R.array.fragment_appearance_colour_array)));
     }
 
     @Override
