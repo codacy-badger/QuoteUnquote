@@ -62,26 +62,26 @@ class FragmentAppearanceTest : FragmentShadowLogging() {
                 fragment.setTextSize()
                 assertEquals(32, fragment.preferenceAppearance.appearanceTextSize)
 
-                fragment.preferenceAppearance.appearanceToolbarFirst = false
-                assertFalse(fragment.preferenceAppearance.appearanceToolbarFirst)
+                fragment.fragmentAppearanceBinding.toolbarSwitchFirst.isChecked = true
+                assertTrue(fragment.preferenceAppearance.appearanceToolbarFirst)
 
-                fragment.preferenceAppearance.appearanceToolbarPrevious = true
-                assertTrue(fragment.preferenceAppearance.appearanceToolbarPrevious)
+                fragment.fragmentAppearanceBinding.toolbarSwitchPrevious.isChecked = false
+                assertFalse(fragment.preferenceAppearance.appearanceToolbarPrevious)
 
-                fragment.preferenceAppearance.appearanceToolbarReport = true
-                assertTrue(fragment.preferenceAppearance.appearanceToolbarReport)
+                fragment.fragmentAppearanceBinding.toolbarSwitchReport.isChecked = false
+                assertFalse(fragment.preferenceAppearance.appearanceToolbarReport)
 
-                fragment.preferenceAppearance.appearanceToolbarFavourite = true
-                assertTrue(fragment.preferenceAppearance.appearanceToolbarFavourite)
+                fragment.fragmentAppearanceBinding.toolbarSwitchToggleFavourite.isChecked = false
+                assertFalse(fragment.preferenceAppearance.appearanceToolbarFavourite)
 
-                fragment.preferenceAppearance.appearanceToolbarShare = true
-                assertTrue(fragment.preferenceAppearance.appearanceToolbarShare)
+                fragment.fragmentAppearanceBinding.toolbarSwitchShare.isChecked = false
+                assertFalse(fragment.preferenceAppearance.appearanceToolbarShare)
 
-                fragment.preferenceAppearance.appearanceToolbarRandom = true
-                assertTrue(fragment.preferenceAppearance.appearanceToolbarRandom)
+                fragment.fragmentAppearanceBinding.toolbarSwitchNextRandom.isChecked = false
+                assertFalse(fragment.preferenceAppearance.appearanceToolbarRandom)
 
-                fragment.preferenceAppearance.appearanceToolbarSequential = false
-                assertFalse(fragment.preferenceAppearance.appearanceToolbarSequential)
+                fragment.fragmentAppearanceBinding.toolbarSwitchNextSequential.isChecked = true
+                assertTrue(fragment.preferenceAppearance.appearanceToolbarSequential)
             }
         }
     }
