@@ -67,7 +67,7 @@
     <string name="fragment_content_author">Author: %d</string>
     <string name="fragment_content_text">Search: %d</string>
     <string name="fragment_content_text_instructions">Case-insensitive content search</string>
-    <string name="fragment_content_text_no_search_results">No results found for criteria</string>
+    <string name="fragment_content_text_no_search_results">No results found for search text</string>
 
     <string name="fragment_event_title">Event</string>
     <string name="fragment_event_instructions">Display a sequential quotation automatically</string>

@@ -43,35 +43,44 @@ public class ActivityConfigure extends AppCompatActivity {
     }
 
     private void finishActivity() {
-        final FragmentContent fragmentContent = (FragmentContent)
-                getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderContent);
+        final FragmentContent fragmentContent = getFragmentContent();
 
         if (isQuotationTextEmpty(fragmentContent)) {
             resetContentSelection();
         }
 
+        if (widgetId != -1) {
+            broadcastFinishIntent();
+        }
+
+        finish();
+    }
+
+    public void broadcastFinishIntent() {
         sendBroadcast(IntentFactoryHelper.createIntentAction(
                 this, widgetId, IntentFactoryHelper.ACTIVITY_FINISHED_CONFIGURATION));
 
         setResult(RESULT_OK, IntentFactoryHelper.createIntent(widgetId));
-        finish();
     }
 
     @Override
     public void onBackPressed() {
         Timber.d("widgetId=%d", widgetId);
 
-        final FragmentContent fragmentContent = (FragmentContent)
-                getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderContent);
+        final FragmentContent fragmentContent = getFragmentContent();
 
         if (isQuotationTextEmpty(fragmentContent)) {
             warnUserAboutQuotationText();
             fragmentContent.fragmentContentBinding.radioButtonAll.setChecked(true);
-
             resetContentSelection();
         } else {
             finishActivity();
         }
+    }
+
+    public FragmentContent getFragmentContent() {
+        return (FragmentContent)
+                getSupportFragmentManager().findFragmentById(R.id.fragmentPlaceholderContent);
     }
 
     private void resetContentSelection() {
@@ -85,7 +94,7 @@ public class ActivityConfigure extends AppCompatActivity {
 
     private boolean isQuotationTextEmpty(final FragmentContent fragmentContent) {
         return fragmentContent.fragmentContentBinding.radioButtonSearch.isChecked()
-                && fragmentContent.countKeywords == 0;
+                && fragmentContent.countSearchResults == 0;
     }
 
     @Override
@@ -97,10 +106,6 @@ public class ActivityConfigure extends AppCompatActivity {
         if (extras != null) {
             widgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-
-        if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Timber.d("AppWidgetManager.INVALID_APPWIDGET_ID");
         }
 
         createFragments();

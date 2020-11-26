@@ -44,7 +44,7 @@ public class FragmentContent extends FragmentCommon {
     private DisposableObserver<Integer> disposableObserver;
 
     public FragmentContentBinding fragmentContentBinding;
-    public int countKeywords;
+    public int countSearchResults;
     protected ContentViewModel contentViewModel;
     protected PreferenceContent preferenceContent;
     private ContentCloud contentCloud;
@@ -122,7 +122,7 @@ public class FragmentContent extends FragmentCommon {
             public void onNext(final Integer value) {
                 fragmentContentBinding.radioButtonSearch.setText(
                         getResources().getString(R.string.fragment_content_text, value));
-                countKeywords = value;
+                countSearchResults = value;
             }
 
             @Override

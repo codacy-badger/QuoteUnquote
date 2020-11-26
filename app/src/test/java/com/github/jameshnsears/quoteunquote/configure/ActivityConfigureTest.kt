@@ -3,9 +3,7 @@ package com.github.jameshnsears.quoteunquote.configure
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import androidx.test.core.app.ActivityScenario
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,14 +24,17 @@ class ActivityConfigureTest {
     }
 
     @Test
-    fun f() {
+    fun `search radio selected, back pressed, all radio selected`() {
         val intent = Intent(getApplicationContext(), ActivityConfigure::class.java)
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 123)
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
 
         scenario = launchActivity(intent)
 
         scenario.onActivity { activity ->
-            assertTrue(activity.widgetId == 123);
+            activity.fragmentContent.fragmentContentBinding.radioButtonSearch.isChecked = true
+            activity.onBackPressed()
+
+            assertTrue(activity.fragmentContent.fragmentContentBinding.radioButtonAll.isChecked)
         }
     }
 }
