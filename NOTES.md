@@ -87,5 +87,4 @@ vscodevim.vim
 
 * Checkstyle-IDE - Jamie Shiell
 * Markdown - JetBrains
-* QAPlug - SolDevelo (PMD disabled)
 * SonarLint - SonarfSource

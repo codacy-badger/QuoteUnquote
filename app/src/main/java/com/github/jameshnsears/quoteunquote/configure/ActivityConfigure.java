@@ -25,7 +25,7 @@ import timber.log.Timber;
 
 
 public class ActivityConfigure extends AppCompatActivity {
-    protected int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    public int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
     protected void onPause() {
@@ -120,10 +120,5 @@ public class ActivityConfigure extends AppCompatActivity {
         fragmentTransaction.commit();
 
         setContentView(R.layout.activity_configure);
-    }
-
-    public int t() {
-        Timber.d("t");
-        return 1;
     }
 }
