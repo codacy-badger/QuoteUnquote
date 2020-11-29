@@ -45,7 +45,7 @@ public class ActivityConfigure extends AppCompatActivity {
     private void finishActivity() {
         final FragmentContent fragmentContent = getFragmentContent();
 
-        if (isQuotationTextEmpty(fragmentContent)) {
+        if (isSearchSelectedButWithoutResults(fragmentContent)) {
             resetContentSelection();
         }
 
@@ -69,8 +69,8 @@ public class ActivityConfigure extends AppCompatActivity {
 
         final FragmentContent fragmentContent = getFragmentContent();
 
-        if (isQuotationTextEmpty(fragmentContent)) {
-            warnUserAboutQuotationText();
+        if (isSearchSelectedButWithoutResults(fragmentContent)) {
+            warnUserAboutSearchResults();
             fragmentContent.fragmentContentBinding.radioButtonAll.setChecked(true);
             resetContentSelection();
         } else {
@@ -88,11 +88,11 @@ public class ActivityConfigure extends AppCompatActivity {
         preferenceContent.setContentSelection(ContentSelection.ALL);
     }
 
-    private void warnUserAboutQuotationText() {
+    private void warnUserAboutSearchResults() {
         ToastHelper.makeToast(this, this.getString(R.string.fragment_content_text_no_search_results), Toast.LENGTH_LONG);
     }
 
-    private boolean isQuotationTextEmpty(final FragmentContent fragmentContent) {
+    private boolean isSearchSelectedButWithoutResults(final FragmentContent fragmentContent) {
         return fragmentContent.fragmentContentBinding.radioButtonSearch.isChecked()
                 && fragmentContent.countSearchResults == 0;
     }

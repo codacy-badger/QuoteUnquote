@@ -87,7 +87,7 @@ public class ContentViewModel extends AndroidViewModel {
         return databaseRepository.countQuotationsText(text);
     }
 
-    public String getSavePayload() {
+    public String getFavouritesToSend() {
         final Future<String> future = executorService.submit(() -> {
 
             RequestSave requestSave = new RequestSave();

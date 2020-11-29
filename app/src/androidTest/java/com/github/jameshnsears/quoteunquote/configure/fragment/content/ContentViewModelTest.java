@@ -128,6 +128,6 @@ public class ContentViewModelTest extends DatabaseTestHelper {
                 WIDGET_ID,
                 quoteUnquoteModel.getNext(WIDGET_ID, ContentSelection.ALL).digest);
 
-        assertTrue("", contentViewModel.getSavePayload().contains("\"digests\":[\"d1\",\"1624c314\"]"));
+        assertTrue("", contentViewModel.getFavouritesToSend().contains("\"digests\":[\"d1\",\"1624c314\"]"));
     }
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.jameshnsears.quoteunquote.configure.fragment.FragmentShadowLogging
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection
+import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,5 +74,20 @@ class FragmentContentTest : FragmentShadowLogging() {
                 assertFalse(fragment.preferenceContent.contentSelection == ContentSelection.FAVOURITES)
             }
         }
+    }
+
+    @Test
+    fun `authorSearch`() {
+        Assert.fail("todo")
+    }
+
+    @Test
+    fun `favouritesSend`() {
+        Assert.fail("todo")
+    }
+
+    @Test
+    fun `favouritesReceive`() {
+        Assert.fail("todo")
     }
 }

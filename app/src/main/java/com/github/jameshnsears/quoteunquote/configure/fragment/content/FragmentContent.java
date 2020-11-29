@@ -211,7 +211,7 @@ public class FragmentContent extends FragmentCommon {
                         }));
     }
 
-    private void setAuthorName(final String firstAuthor) {
+    protected void setAuthorName(final String firstAuthor) {
         final String authorPreference = preferenceContent.getContentSelectionAuthorName();
 
         if ("".equals(authorPreference)) {
@@ -394,7 +394,7 @@ public class FragmentContent extends FragmentCommon {
 
                 if (!CloudServiceSend.isRunning(getContext())) {
                     final Intent serviceIntent = new Intent(getContext(), CloudServiceSend.class);
-                    serviceIntent.putExtra("savePayload", contentViewModel.getSavePayload());
+                    serviceIntent.putExtra("savePayload", contentViewModel.getFavouritesToSend());
                     serviceIntent.putExtra(
                             "localCodeValue", fragmentContentBinding.textViewLocalCodeValue.getText().toString());
                     getContext().startService(serviceIntent);
