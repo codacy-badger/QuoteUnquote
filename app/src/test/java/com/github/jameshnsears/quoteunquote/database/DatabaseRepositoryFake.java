@@ -9,7 +9,6 @@ import androidx.test.core.app.ApplicationProvider;
 import com.github.jameshnsears.quoteunquote.database.history.AbstractHistoryDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.AbstractQuotationDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
-import com.guness.robolectric.sqlite.library.SQLiteLibraryLoader;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,11 +18,13 @@ import java.util.concurrent.Future;
 
 import io.reactivex.Single;
 
+//import com.guness.robolectric.sqlite.library.SQLiteLibraryLoader;
+
 public final class DatabaseRepositoryFake extends DatabaseRepository {
     private static final String LOG_TAG = DatabaseRepositoryFake.class.getSimpleName();
 
     public DatabaseRepositoryFake() {
-        SQLiteLibraryLoader.load();
+        //SQLiteLibraryLoader.load();
 
         abstractQuotationDatabase = Room.inMemoryDatabaseBuilder(
                 ApplicationProvider.getApplicationContext(),

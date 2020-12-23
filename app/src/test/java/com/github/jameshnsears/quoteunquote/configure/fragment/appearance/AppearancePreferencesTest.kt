@@ -3,7 +3,7 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.appearance
 import android.os.Build
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.jameshnsears.quoteunquote.configure.ShadowLoggingHelper
+import com.github.jameshnsears.quoteunquote.utils.logging.ShadowLoggingHelper
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.Assert.assertEquals
@@ -63,25 +63,25 @@ class AppearancePreferencesTest : ShadowLoggingHelper() {
                 fragment.setTextSize()
                 assertEquals(32, fragment.preferenceAppearance?.appearanceTextSize)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchFirst.isChecked = true
+                fragment.fragmentAppearanceBinding?.toolbarSwitchFirst?.isChecked = true
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarFirst == true)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchPrevious.isChecked = false
+                fragment.fragmentAppearanceBinding?.toolbarSwitchPrevious?.isChecked = false
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarPrevious == false)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchReport.isChecked = false
+                fragment.fragmentAppearanceBinding?.toolbarSwitchReport?.isChecked = false
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarReport == false)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchToggleFavourite.isChecked = false
+                fragment.fragmentAppearanceBinding?.toolbarSwitchToggleFavourite?.isChecked = false
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarFavourite == false)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchShare.isChecked = false
+                fragment.fragmentAppearanceBinding?.toolbarSwitchShare?.isChecked = false
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarShare == false)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchNextRandom.isChecked = false
+                fragment.fragmentAppearanceBinding?.toolbarSwitchNextRandom?.isChecked = false
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarRandom == false)
 
-                fragment.fragmentAppearanceBinding?.toolbarSwitchNextSequential.isChecked = true
+                fragment.fragmentAppearanceBinding?.toolbarSwitchNextSequential?.isChecked = true
                 assertTrue(fragment.preferenceAppearance?.appearanceToolbarSequential == true)
             }
         }

@@ -3,7 +3,7 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.event
 import android.os.Build
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.jameshnsears.quoteunquote.configure.ShadowLoggingHelper
+import com.github.jameshnsears.quoteunquote.utils.logging.ShadowLoggingHelper
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual

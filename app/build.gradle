@@ -208,7 +208,6 @@ dependencies {
     integrationTestImplementation "org.robolectric:robolectric:4.4"
     integrationTestImplementation 'org.slf4j:slf4j-api:1.7.30'
     integrationTestImplementation 'org.slf4j:slf4j-log4j12:1.7.30'
-    integrationTestImplementation 'com.github.guness:robolectricsqlite:1.0.8'
 }
 
 repositories {

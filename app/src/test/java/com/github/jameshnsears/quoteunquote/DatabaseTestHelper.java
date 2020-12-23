@@ -9,7 +9,6 @@ import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.history.AbstractHistoryDatabase;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
-import com.guness.robolectric.sqlite.library.SQLiteLibraryLoader;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+
+//import com.guness.robolectric.sqlite.library.SQLiteLibraryLoader;
 
 
 public class DatabaseTestHelper {
@@ -31,7 +32,7 @@ public class DatabaseTestHelper {
 
     @Before
     public void setUp() {
-        SQLiteLibraryLoader.load();
+//        SQLiteLibraryLoader.load();
 
         ApplicationProvider.getApplicationContext().deleteDatabase(AbstractHistoryDatabase.DATABASE_NAME);
         quoteUnquoteModel = new QuoteUnquoteModelFake();

@@ -1,4 +1,4 @@
-package com.github.jameshnsears.quoteunquote.configure
+package com.github.jameshnsears.quoteunquote.utils.logging
 
 import org.junit.Before
 import org.robolectric.shadows.ShadowLog
