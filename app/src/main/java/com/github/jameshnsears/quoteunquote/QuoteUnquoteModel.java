@@ -2,12 +2,15 @@ package com.github.jameshnsears.quoteunquote;
 
 import android.content.Context;
 
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.NoNextQuotationAvailableException;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
+import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,14 +23,17 @@ import java.util.concurrent.Future;
 import timber.log.Timber;
 
 public class QuoteUnquoteModel {
+    @NonNull
     public final ExecutorService executorService = Executors.newFixedThreadPool(3);
+    @Nullable
     protected DatabaseRepository databaseRepository;
+    @Nullable
     protected Context context;
 
     public QuoteUnquoteModel() {
     }
 
-    public QuoteUnquoteModel(final Context widgetContext) {
+    public QuoteUnquoteModel(@NonNull final Context widgetContext) {
         this.context = widgetContext;
         databaseRepository = new DatabaseRepository(widgetContext);
     }
@@ -62,7 +68,10 @@ public class QuoteUnquoteModel {
         Timber.d("widgetId=%d", widgetId);
     }
 
-    public void setNext(final int widgetId, final ContentSelection contentSelection, final boolean randomNext)
+    public void setNext(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection,
+            final boolean randomNext)
             throws NoNextQuotationAvailableException {
         final String logMsg = String.format(Locale.ENGLISH, "%d: contentType=%d", widgetId, contentSelection.getContentType());
         Timber.d(logMsg);
@@ -109,6 +118,7 @@ public class QuoteUnquoteModel {
         }
     }
 
+    @NonNull
     public String getPreferencesAuthorSearch(final int widgetId) {
         return new PreferenceContent(widgetId, context).getContentSelectionAuthorName();
     }
@@ -117,7 +127,10 @@ public class QuoteUnquoteModel {
         return new PreferenceContent(widgetId, context).getContentSelectionSearchText();
     }
 
-    public QuotationEntity getNext(final int widgetId, final ContentSelection contentSelection) {
+    @NonNull
+    public QuotationEntity getNext(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection) {
         final String logMsg = String.format(Locale.ENGLISH, "%d: contentType=%s", widgetId, contentSelection.getContentType());
         Timber.d(logMsg);
 
@@ -174,7 +187,7 @@ public class QuoteUnquoteModel {
         return quotationEntity;
     }
 
-    public int countPrevious(final int widgetId, final ContentSelection contentSelection) {
+    public int countPrevious(final int widgetId, @NonNull final ContentSelection contentSelection) {
         return databaseRepository.countPrevious(widgetId, contentSelection);
     }
 
@@ -186,7 +199,7 @@ public class QuoteUnquoteModel {
         return databaseRepository.countPrevious(widgetId, ContentSelection.SEARCH, getPreferencesTextSearch(widgetId));
     }
 
-    public void toggleFavourite(final int widgetId, final String digest) {
+    public void toggleFavourite(final int widgetId, @NonNull final String digest) {
         final String logMsg = String.format(Locale.ENGLISH, "%d: digest=%s", widgetId, digest);
         Timber.d(logMsg);
 
@@ -229,14 +242,10 @@ public class QuoteUnquoteModel {
     }
 
     public boolean isRadioButtonFavouriteSelected(final int widgetId) {
-        if (new PreferenceContent(widgetId, context).getContentSelection().equals(ContentSelection.FAVOURITES)) {
-            return true;
-        } else {
-            return false;
-        }
+        return new PreferenceContent(widgetId, context).getContentSelection().equals(ContentSelection.FAVOURITES);
     }
 
-    public boolean isFavourite(final int widgetId, final String digest) {
+    public boolean isFavourite(final int widgetId, @NonNull final String digest) {
         final String logMsg = String.format(Locale.ENGLISH, "%d: digest=%s", widgetId, digest);
 
         final Future<Integer> future = executorService.submit(() -> {
@@ -289,7 +298,7 @@ public class QuoteUnquoteModel {
         }
     }
 
-    public void deletePrevious(final int widgetId, final ContentSelection contentSelection) {
+    public void deletePrevious(final int widgetId, @NonNull final ContentSelection contentSelection) {
         final String logMsg = String.format(Locale.ENGLISH, "%d: contentType=%d", widgetId, contentSelection.getContentType());
         Timber.d(logMsg);
 

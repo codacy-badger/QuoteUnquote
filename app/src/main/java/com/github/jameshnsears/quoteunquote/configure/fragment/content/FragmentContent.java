@@ -13,23 +13,25 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
 import com.github.jameshnsears.quoteunquote.cloud.CloudFavouritesHelper;
 import com.github.jameshnsears.quoteunquote.cloud.CloudServiceReceive;
 import com.github.jameshnsears.quoteunquote.cloud.CloudServiceSend;
 import com.github.jameshnsears.quoteunquote.configure.fragment.FragmentCommon;
 import com.github.jameshnsears.quoteunquote.database.quotation.AuthorPOJO;
 import com.github.jameshnsears.quoteunquote.databinding.FragmentContentBinding;
-import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
+import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,19 +42,29 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class FragmentContent extends FragmentCommon {
+    @NonNull
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private DisposableObserver<Integer> disposableObserver;
-
+    @Nullable
     public FragmentContentBinding fragmentContentBinding;
+    public volatile CountDownLatch disposableCompletedAllCount = new CountDownLatch(1);
     public int countSearchResults;
+    public volatile CountDownLatch disposableCompletedSetAuthor = new CountDownLatch(1);
+    public volatile CountDownLatch disposableCompletedSetFavouriteCount = new CountDownLatch(1);
+    @Nullable
     protected ContentViewModel contentViewModel;
-    protected PreferenceContent preferenceContent;
-    private ContentCloud contentCloud;
 
     protected FragmentContent(final int widgetId) {
         super(widgetId);
     }
 
+    @Nullable
+    protected PreferenceContent preferenceContent;
+    @Nullable
+    private DisposableObserver<Integer> disposableObserver;
+    @Nullable
+    private ContentCloud contentCloud;
+
+    @NonNull
     public static FragmentContent newInstance(final int widgetId) {
         final FragmentContent fragment = new FragmentContent(widgetId);
         fragment.setArguments(null);
@@ -60,15 +72,18 @@ public class FragmentContent extends FragmentCommon {
     }
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(@NonNull final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         contentViewModel = new ViewModelProvider(this).get(ContentViewModel.class);
         contentCloud = new ContentCloud();
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+    @NonNull
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            final ViewGroup container,
+            final Bundle savedInstanceState) {
         final Intent intent = new Intent(getContext(), CloudServiceReceive.class);
         getContext().bindService(intent, contentCloud.serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -84,49 +99,49 @@ public class FragmentContent extends FragmentCommon {
 
         fragmentContentBinding = null;
 
-        contentViewModel.shutdown();
-
-        disposables.clear();
-        disposableObserver.dispose();
+        shutdown();
 
         getContext().unbindService(contentCloud.serviceConnection);
         contentCloud.isServiceReceiveBound = false;
     }
 
-    @Override
-    public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        createListenerRadioGroup();
-        createListenerAuthor();
-        createListenerFavouriteButtonSend();
-        createListenerFavouriteButtonReceive();
+    public void shutdown() {
+        if (disposables != null) {
+            disposables.clear();
+            disposables.dispose();
+        }
 
-        setSelection();
+        if (disposableObserver != null) {
+            disposableObserver.dispose();
+        }
 
-        enableFavouriteButtonReceive(true);
-
-        setAllCount();
-        setAuthor();
-        setFavouriteCount();
-        setFavouriteLocalCode();
-        setSearch();
+        contentViewModel.shutdown();
     }
 
-    private void setFavouriteLocalCode() {
-        String favouritesLocalCode = CloudFavouritesHelper.getLocalCode(getContext());
-        fragmentContentBinding.textViewLocalCodeValue.setText(favouritesLocalCode);
+    protected void setFavouriteLocalCode() {
+        final PreferenceContent preferenceContent = new PreferenceContent(0, getContext());
+
+        String localCode = preferenceContent.getContentFavouritesLocalCode();
+
+        if ("".equals(localCode) && !preferenceContent.getContentFavouritesLocalCode().equals(CloudFavouritesHelper.getLocalCode())) {
+            preferenceContent.setContentFavouritesLocalCode(CloudFavouritesHelper.getLocalCode());
+            localCode = preferenceContent.getContentFavouritesLocalCode();
+        }
+
+        fragmentContentBinding.textViewLocalCodeValue.setText(localCode);
     }
 
-    private void setSearch() {
+    protected void setSearch() {
         disposableObserver = new DisposableObserver<Integer>() {
             @Override
-            public void onNext(final Integer value) {
+            public void onNext(@NonNull final Integer value) {
                 fragmentContentBinding.radioButtonSearch.setText(
                         getResources().getString(R.string.fragment_content_text, value));
                 countSearchResults = value;
             }
 
             @Override
-            public void onError(final Throwable throwable) {
+            public void onError(@NonNull final Throwable throwable) {
                 Timber.d(throwable);
             }
 
@@ -145,7 +160,9 @@ public class FragmentContent extends FragmentCommon {
                     if (!keywords.equals("")) {
                         Timber.d("apply:%s", keywords);
 
-                        preferenceContent.setContentSelectionSearchText(keywords);
+                        if (!preferenceContent.getContentSelectionSearchText().equals(keywords)) {
+                            preferenceContent.setContentSelectionSearchText(keywords);
+                        }
 
                         return contentViewModel.countQuotationWithText(keywords);
                     } else {
@@ -165,33 +182,53 @@ public class FragmentContent extends FragmentCommon {
         }
     }
 
-    private void setAllCount() {
+    @Override
+    public void onViewCreated(
+            @NonNull final View view, final Bundle savedInstanceState) {
+        createListenerRadioGroup();
+        createListenerAuthor();
+        createListenerFavouriteButtonSend();
+        createListenerFavouriteButtonReceive();
+
+        setSelection();
+
+        enableFavouriteButtonReceive(true);
+
+        setAllCount();
+        setAuthor();
+        setFavouriteCount();
+        setFavouriteLocalCode();
+        setSearch();
+    }
+
+    public void setAllCount() {
         disposables.add(contentViewModel.countAll()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())     // AndroidSchedulers.mainThread()
                 .subscribeWith(
                         new DisposableSingleObserver<Integer>() {
                             @Override
-                            public void onSuccess(final Integer value) {
+                            public void onSuccess(@NonNull final Integer value) {
                                 fragmentContentBinding.radioButtonAll.setText(
                                         getResources().getString(R.string.fragment_content_all, value));
+                                disposableCompletedAllCount.countDown();
                             }
 
                             @Override
-                            public void onError(final Throwable throwable) {
+                            public void onError(@NonNull final Throwable throwable) {
                                 Timber.d(throwable);
                             }
                         }));
     }
 
-    private void setAuthor() {
+    protected void setAuthor() {
         disposables.add(contentViewModel.authors()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())     // AndroidSchedulers.mainThread()
                 .subscribeWith(
                         new DisposableSingleObserver<List<AuthorPOJO>>() {
                             @Override
-                            public void onSuccess(final List<AuthorPOJO> authorPOJOList) {
+                            public void onSuccess(@NonNull final List<AuthorPOJO> authorPOJOList) {
                                 final List<String> authors = contentViewModel.authorsSorted(authorPOJOList);
 
                                 final ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -202,30 +239,36 @@ public class FragmentContent extends FragmentCommon {
                                 fragmentContentBinding.spinnerAuthors.setAdapter(adapter);
 
                                 setAuthorName(authors.get(0));
+
+                                disposableCompletedSetAuthor.countDown();
                             }
 
                             @Override
-                            public void onError(final Throwable throwable) {
+                            public void onError(@NonNull final Throwable throwable) {
                                 Timber.d(throwable);
                             }
                         }));
     }
 
-    protected void setAuthorName(final String firstAuthor) {
+    protected void setAuthorName(@NonNull final String firstAuthor) {
         final String authorPreference = preferenceContent.getContentSelectionAuthorName();
 
-        if ("".equals(authorPreference)) {
+        if ("".equals(authorPreference) && !authorPreference.equals(firstAuthor)) {
             fragmentContentBinding.radioButtonAuthor.setText(
-                    String.format(Locale.ENGLISH, "%s %d",
-                            getResources().getString(R.string.fragment_content_author),
+                    getResources().getString(
+                            R.string.fragment_content_author,
                             contentViewModel.countAuthorQuotations(firstAuthor)));
-            preferenceContent.setContentSelectionAuthorName(firstAuthor);
+
+
+            if (!preferenceContent.getContentSelectionAuthorName().equals(firstAuthor)) {
+                preferenceContent.setContentSelectionAuthorName(firstAuthor);
+            }
         } else {
             fragmentContentBinding.spinnerAuthors.setSelection(contentViewModel.authorsIndex(authorPreference));
 
             fragmentContentBinding.radioButtonAuthor.setText(
-                    String.format(Locale.ENGLISH, "%s %d",
-                            getResources().getString(R.string.fragment_content_author),
+                    getResources().getString(
+                            R.string.fragment_content_author,
                             contentViewModel.countAuthorQuotations(authorPreference)));
         }
     }
@@ -233,11 +276,11 @@ public class FragmentContent extends FragmentCommon {
     public void setFavouriteCount() {
         disposables.add(contentViewModel.countFavourites()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())      // AndroidSchedulers.mainThread()
                 .subscribeWith(
                         new DisposableSingleObserver<Integer>() {
                             @Override
-                            public void onSuccess(final Integer value) {
+                            public void onSuccess(@NonNull final Integer value) {
                                 fragmentContentBinding.radioButtonFavourites.setEnabled(true);
                                 if (value == 0) {
                                     fragmentContentBinding.radioButtonFavourites.setEnabled(false);
@@ -245,10 +288,12 @@ public class FragmentContent extends FragmentCommon {
 
                                 fragmentContentBinding.radioButtonFavourites.setText(
                                         getResources().getString(R.string.fragment_content_favourites, value));
+
+                                disposableCompletedSetFavouriteCount.countDown();
                             }
 
                             @Override
-                            public void onError(final Throwable throwable) {
+                            public void onError(@NonNull final Throwable throwable) {
                                 Timber.d(throwable);
                             }
                         }));
@@ -271,6 +316,9 @@ public class FragmentContent extends FragmentCommon {
                 break;
             case SEARCH:
                 setSelectionSearch();
+                break;
+            default:
+                Timber.e("unknown switch");
                 break;
         }
     }
@@ -297,7 +345,7 @@ public class FragmentContent extends FragmentCommon {
 
         final String searchText = preferenceContent.getContentSelectionSearchText();
 
-        if (!searchText.equals("")) {
+        if (!searchText.equals("") && !preferenceContent.getContentSelectionSearchText().equals(searchText)) {
             preferenceContent.setContentSelectionSearchText(searchText);
 
             final EditText editTextKeywordsSearch = fragmentContentBinding.editTextSearchText;
@@ -305,7 +353,7 @@ public class FragmentContent extends FragmentCommon {
         }
     }
 
-    private void createListenerRadioGroup() {
+    protected void createListenerRadioGroup() {
         final RadioGroup radioGroupContent = fragmentContentBinding.radioGroupContent;
         radioGroupContent.setOnCheckedChangeListener((group, checkedId) -> {
 
@@ -362,7 +410,7 @@ public class FragmentContent extends FragmentCommon {
         fragmentContentBinding.editTextSearchText.setEnabled(enable);
     }
 
-    private void createListenerAuthor() {
+    protected void createListenerAuthor() {
         fragmentContentBinding.spinnerAuthors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long selectedItemId) {
@@ -388,7 +436,7 @@ public class FragmentContent extends FragmentCommon {
         });
     }
 
-    private void createListenerFavouriteButtonSend() {
+    protected void createListenerFavouriteButtonSend() {
         fragmentContentBinding.buttonSend.setOnClickListener(v -> {
             if (fragmentContentBinding.buttonSend.isEnabled()) {
 
@@ -405,7 +453,7 @@ public class FragmentContent extends FragmentCommon {
         });
     }
 
-    private void createListenerFavouriteButtonReceive() {
+    protected void createListenerFavouriteButtonReceive() {
         fragmentContentBinding.buttonReceive.setOnClickListener(v -> {
             if (fragmentContentBinding.buttonReceive.isEnabled()) {
                 Timber.d("buttonReceive: remoteCode=%s", fragmentContentBinding.editTextRemoteCodeValue.getText().toString());

@@ -9,7 +9,6 @@
     android:paddingEnd="5dp">
 
     <TextView
-        android:id="@+id/textViewGeneralInstructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
@@ -36,7 +35,6 @@
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_weight="1"
@@ -72,7 +70,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textViewText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="5dp"

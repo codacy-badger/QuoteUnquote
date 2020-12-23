@@ -9,31 +9,39 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.github.jameshnsears.quoteunquote.R;
 import com.github.jameshnsears.quoteunquote.configure.fragment.content.FragmentContent;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
-import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
+import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CloudServiceReceive extends Service {
+    @NonNull
     private final IBinder binder = new LocalBinder();
 
+    @NonNull
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
-    public IBinder onBind(final Intent intent) {
+    @NonNull
+    public IBinder onBind(@NonNull final Intent intent) {
         return binder;
     }
 
-    private void showNoNetworkToast(final Context context) {
+    private void showNoNetworkToast(@NonNull final Context context) {
         handler.post(() -> ToastHelper.makeToast(
                 context,
                 context.getString(R.string.fragment_content_favourites_share_comms),
                 Toast.LENGTH_SHORT));
     }
 
-    public void receive(final FragmentContent fragmentContent, final String remoteCodeValue) {
+    public void receive(
+            @NonNull final FragmentContent fragmentContent, @NonNull final String remoteCodeValue) {
         new Thread(() -> {
             final Context context = CloudServiceReceive.this.getApplicationContext();
 
@@ -49,7 +57,7 @@ public final class CloudServiceReceive extends Service {
                             Toast.LENGTH_LONG));
 
                     final List<String> favouritesReceived = cloudFavourites.receive(
-                            CloudFavourites.TIMEOUT,
+                            CloudFavourites.TIMEOUT_SECONDS,
                             CloudFavouritesHelper.receiveRequest(remoteCodeValue));
 
                     if (favouritesReceived.isEmpty()) {
@@ -67,7 +75,9 @@ public final class CloudServiceReceive extends Service {
                             fragmentContent.enableFavouriteButtonReceive(true);
                         }
 
-                        CloudFavouritesHelper.auditFavourites("FAVOURITE_RECEIVE", remoteCodeValue);
+                        final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
+                        properties.put("code", remoteCodeValue);
+                        AuditEventHelper.auditEvent("FAVOURITE_RECEIVE", properties);
                     }
                 }
             } finally {
@@ -77,6 +87,7 @@ public final class CloudServiceReceive extends Service {
     }
 
     public class LocalBinder extends Binder {
+        @NonNull
         public CloudServiceReceive getService() {
             return CloudServiceReceive.this;
         }

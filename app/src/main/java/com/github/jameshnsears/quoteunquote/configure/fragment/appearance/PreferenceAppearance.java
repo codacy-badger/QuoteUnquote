@@ -2,10 +2,14 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.appearance;
 
 import android.content.Context;
 
-import com.github.jameshnsears.quoteunquote.preference.PreferenceFacade;
+import androidx.annotation.NonNull;
+
+import com.github.jameshnsears.quoteunquote.utils.preference.PreferenceFacade;
 
 public class PreferenceAppearance extends PreferenceFacade {
-    public PreferenceAppearance(final int widgetId, final Context applicationContext) {
+    public PreferenceAppearance(
+            final int widgetId,
+            @NonNull final Context applicationContext) {
         super(widgetId, applicationContext);
     }
 
@@ -17,11 +21,12 @@ public class PreferenceAppearance extends PreferenceFacade {
         preferenceHelper.setPreference(getPreferenceKey("APPEARANCE_TRANSPARENCY"), value);
     }
 
+    @NonNull
     public String getAppearanceTextColour() {
         return preferenceHelper.getPreferenceString(getPreferenceKey("APPEARANCE_TEXT_COLOUR"));
     }
 
-    public void setAppearanceTextColour(final String value) {
+    public void setAppearanceTextColour(@NonNull final String value) {
         preferenceHelper.setPreference(getPreferenceKey("APPEARANCE_TEXT_COLOUR"), value);
     }
 

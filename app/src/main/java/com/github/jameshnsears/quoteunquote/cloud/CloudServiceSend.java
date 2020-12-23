@@ -9,15 +9,20 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
+import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CloudServiceSend extends Service {
+    @NonNull
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    public static boolean isRunning(final Context context) {
+    public static boolean isRunning(@NonNull final Context context) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
         for (final ActivityManager.RunningServiceInfo runningServiceInfo : activityManager.getRunningServices(Integer.MAX_VALUE)) {
@@ -28,13 +33,13 @@ public final class CloudServiceSend extends Service {
         return false;
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(final Intent intent) {
+    @Nullable
+    public IBinder onBind(@NonNull final Intent intent) {
         return null;
     }
 
-    private void showNoNetworkToast(final Context context) {
+    private void showNoNetworkToast(@NonNull final Context context) {
         handler.post(() -> ToastHelper.makeToast(
                 context,
                 context.getString(R.string.fragment_content_favourites_share_comms),
@@ -42,7 +47,8 @@ public final class CloudServiceSend extends Service {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
+    public int onStartCommand(
+            @NonNull final Intent intent, final int flags, final int startId) {
         new Thread(() -> {
             final Context context = CloudServiceSend.this.getApplicationContext();
 
@@ -64,9 +70,10 @@ public final class CloudServiceSend extends Service {
                                 context.getString(R.string.fragment_content_favourites_share_sent, intent.getStringExtra("localCodeValue")),
                                 Toast.LENGTH_LONG));
 
-                        CloudFavouritesHelper.auditFavourites(
-                                "FAVOURITE_SEND",
-                                intent.getStringExtra("localCodeValue"));
+                        final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
+                        properties.put("code", intent.getStringExtra("localCodeValue"));
+                        AuditEventHelper.auditEvent("FAVOURITE_SEND", properties);
+
                     } else {
                         showNoNetworkToast(context);
                     }

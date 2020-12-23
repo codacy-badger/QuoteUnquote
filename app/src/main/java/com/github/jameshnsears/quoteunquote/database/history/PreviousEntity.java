@@ -11,7 +11,6 @@ import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 @Entity(tableName = "previous")
 @TypeConverters({ContentSelection.class})
 public class PreviousEntity {
-    @NonNull
     @ColumnInfo(name = "widget_id")
     public final int widgetId;
 
@@ -26,7 +25,10 @@ public class PreviousEntity {
     @PrimaryKey(autoGenerate = true)
     public int navigation;
 
-    public PreviousEntity(final int widgetId, final ContentSelection contentSelection, final String digest) {
+    public PreviousEntity(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection,
+            @NonNull final String digest) {
         this.widgetId = widgetId;
         this.contentSelection = contentSelection;
         this.digest = digest;

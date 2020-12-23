@@ -2,10 +2,12 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.event;
 
 import android.content.Context;
 
-import com.github.jameshnsears.quoteunquote.preference.PreferenceFacade;
+import androidx.annotation.NonNull;
+
+import com.github.jameshnsears.quoteunquote.utils.preference.PreferenceFacade;
 
 public class PreferenceEvent extends PreferenceFacade {
-    public PreferenceEvent(final int widgetId, final Context applicationContext) {
+    public PreferenceEvent(final int widgetId, @NonNull final Context applicationContext) {
         super(widgetId, applicationContext);
     }
 

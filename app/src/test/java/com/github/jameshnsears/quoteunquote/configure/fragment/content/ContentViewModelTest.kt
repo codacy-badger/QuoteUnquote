@@ -2,7 +2,7 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.content
 
 import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Assert
+import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -11,17 +11,17 @@ import org.robolectric.annotation.Config
 @Config(sdk = [Build.VERSION_CODES.P])
 class ContentViewModelTest {
     @Test
-    fun `authorsSorted`() {
-        Assert.fail("todo")
+    fun `todo - authorsSorted`() {
+        fail("todo")
     }
 
     @Test
-    fun `countAuthorQuotations`() {
-        Assert.fail("todo")
+    fun `todo - countAuthorQuotations`() {
+        fail("todo")
     }
 
     @Test
-    fun `getFavouritesToSend`() {
-        Assert.fail("todo")
+    fun `todo - getFavouritesToSend`() {
+        fail("todo")
     }
 }

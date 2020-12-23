@@ -4,6 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
 
 import java.util.Calendar;
@@ -11,11 +14,13 @@ import java.util.Calendar;
 import timber.log.Timber;
 
 public final class DailyAlarm {
+    @Nullable
     private final PreferenceEvent preferenceEvent;
     private final Context context;
     private final int widgetId;
 
-    public DailyAlarm(final Context widgetContext, final int theWidgetId) {
+    public DailyAlarm(
+            @NonNull final Context widgetContext, final int theWidgetId) {
         this.context = widgetContext;
         this.widgetId = theWidgetId;
         preferenceEvent = new PreferenceEvent(theWidgetId, widgetContext);

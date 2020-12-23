@@ -2,6 +2,8 @@ package com.github.jameshnsears.quoteunquote.database.quotation;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -12,9 +14,11 @@ import com.github.jameshnsears.quoteunquote.BuildConfig;
         entities = {QuotationEntity.class},
         version = 1)
 public abstract class AbstractQuotationDatabase extends RoomDatabase {
+    @Nullable
     private static AbstractQuotationDatabase quotationDatabase;
 
-    public static AbstractQuotationDatabase getDatabase(final Context context) {
+    @NonNull
+    public static AbstractQuotationDatabase getDatabase(@NonNull final Context context) {
         String dbName = "quotations.db.dev";
 
         if (BuildConfig.USE_PROD_DB) {

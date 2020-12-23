@@ -9,6 +9,9 @@ import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteModel;
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteWidget;
 import com.github.jameshnsears.quoteunquote.configure.fragment.appearance.PreferenceAppearance;
@@ -21,15 +24,21 @@ import java.util.List;
 import timber.log.Timber;
 
 class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
+    @NonNull
     private final List<String> quotationList = new ArrayList<>();
+    @NonNull
     private final Context context;
     private final int widgetId;
+    @Nullable
     private final QuoteUnquoteWidget quoteUnquoteWidget;
+    @Nullable
     public PreferenceAppearance preferenceAppearance;
+    @Nullable
     public PreferenceContent preferenceContent;
+    @Nullable
     private QuotationEntity quotationEntity;
 
-    ListViewProvider(final Context serviceContext, final Intent intent) {
+    ListViewProvider(@NonNull final Context serviceContext, @NonNull final Intent intent) {
         this.context = serviceContext;
         this.widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
 
@@ -61,7 +70,8 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
         }
     }
 
-    public QuoteUnquoteModel getQuoteUnquoteModel(final Context listViewContext) {
+    @NonNull
+    public QuoteUnquoteModel getQuoteUnquoteModel(@NonNull final Context listViewContext) {
         return quoteUnquoteWidget.getQuoteUnquoteModelInstance(listViewContext);
     }
 
@@ -78,6 +88,7 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
     @Override
+    @NonNull
     public RemoteViews getViewAt(final int position) {
         final RemoteViews remoteViews = getRemoteViews(position);
 
@@ -88,6 +99,7 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
         return remoteViews;
     }
 
+    @NonNull
     private RemoteViews getRemoteViews(final int position) {
         final RemoteViews remoteViews = new RemoteViews(this.context.getPackageName(),
                 android.R.layout.simple_list_item_1);

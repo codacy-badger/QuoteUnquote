@@ -1,7 +1,0 @@
-<resources>
-    <string name="fragment_content_favourites_share_comms">Please check your network connection</string>
-    <string name="fragment_content_favourites_share_receiving">Fetching favourites…</string>
-    <string name="fragment_content_favourites_share_missing">Unable to locate remote code, please retry later</string>
-    <string name="fragment_content_favourites_share_sending">Sending favourites…</string>
-    <string name="fragment_content_favourites_share_sent">Sent - use %s on secondary device</string>
-</resources>

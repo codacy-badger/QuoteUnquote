@@ -18,17 +18,22 @@ public class QuotationEntity {
     @ColumnInfo(name = "digest")
     public final String digest;
 
-    public QuotationEntity(final String digest, final String author, final String quotation) {
+    public QuotationEntity(
+            @NonNull final String digest,
+            @NonNull final String author,
+            @NonNull final String quotation) {
         this.author = author;
         this.quotation = quotation;
         this.digest = digest;
     }
 
     @Override
+    @NonNull
     public String toString() {
         return String.format("digest=%s; author=%s", digest, author);
     }
 
+    @NonNull
     public String theQuotation() {
         return String.format("%s%n%n - %s", quotation, author);
     }

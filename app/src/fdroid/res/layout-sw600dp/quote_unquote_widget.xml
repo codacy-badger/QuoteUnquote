@@ -8,7 +8,7 @@
     <ListView
         android:id="@+id/listViewQuotation"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_marginBottom="5dp"
         android:layout_weight="1"
         android:divider="@null"
@@ -17,7 +17,6 @@
         android:paddingVertical="2dp" />
 
     <LinearLayout
-        android:id="@+id/linearLayoutToolbar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal">

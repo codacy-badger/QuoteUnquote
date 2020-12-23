@@ -1,5 +1,6 @@
 package com.github.jameshnsears.quoteunquote.utils;
 
+import androidx.annotation.NonNull;
 import androidx.room.TypeConverter;
 
 import java.util.Objects;
@@ -11,14 +12,16 @@ public enum ContentSelection {
     SEARCH(4),
     REPORT(5);
 
+    @NonNull
     private final Integer code;
 
-    ContentSelection(final Integer value) {
+    ContentSelection(@NonNull final Integer value) {
         this.code = value;
     }
 
     @TypeConverter
-    public static ContentSelection getContentType(final Integer integer) {
+    @NonNull
+    public static ContentSelection getContentType(@NonNull final Integer integer) {
         for (final ContentSelection contentSelection : values()) {
             if (Objects.equals(contentSelection.code, integer)) {
                 return contentSelection;
@@ -28,10 +31,12 @@ public enum ContentSelection {
     }
 
     @TypeConverter
-    public static Integer getContentTypeInt(final ContentSelection contentSelection) {
+    @NonNull
+    public static Integer getContentTypeInt(@NonNull final ContentSelection contentSelection) {
         return contentSelection.code;
     }
 
+    @NonNull
     public Integer getContentType() {
         return code;
     }

@@ -8,7 +8,28 @@ cd ..
 
 ####################
 
-# test + androidTest (assumes suitable emulator already up)
+# utilsLib/build/reports/lint-results-googleplayDebug.html
+# cloudLib/build/reports/lint-results-googleplayDebug.html
+# app/build/reports/lint-results-googleplayDebug.html
+./gradlew lintGooglePlayDebug
+
+# utilsLib/build/reports/lint-results-frdoidDebug.html
+# cloudLib/build/reports/lint-results-frdoidDebug.html
+# app/build/reports/lint-results-frdoidDebug.html
+./gradlew lintFdroidDebug
+
+####################
+
+# ./gradlew ktlintformat
+./gradlew ktlint
+
+# ./gradlew detektBaseline
+./gradlew detekt
+
+####################
+
+# assuming suitable emulator already up...
+
 # app/build/jacoco/testDebugUnitTest.exec
 # app/build/outputs/code_coverage/debugAndroidTest/connected/Pixel_3a_API_24(AVD) - 7.0-coverage.ec
 #
@@ -23,19 +44,6 @@ cd ..
 ./gradlew jacocoReport
 
 ./gradlew coveralls
-
-####################
-
-# app/build/reports/lint-results.html
-./gradlew lint
-
-####################
-
-# ./gradlew ktlintformat
-./gradlew ktlint
-
-# ./gradlew detektBaseline
-./gradlew detekt
 
 ####################
 

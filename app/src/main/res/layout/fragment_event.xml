@@ -25,7 +25,6 @@
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_weight="1"

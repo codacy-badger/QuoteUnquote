@@ -19,3 +19,5 @@ app/schemas/com.github.jameshnsears.quoteunquote.database.quotation.QuotationDat
 /local.properties
 /Quote, Unquote.vpp.bak_*
 /utilsLibrary/coverage-error.log
+cloudLib/gcp/config/qualified-glow-281314.json
+cloudLib/gcp/config/virtual-ego-281313.json

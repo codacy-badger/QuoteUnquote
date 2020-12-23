@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.cloud.CloudFavouritesHelper;
 import com.github.jameshnsears.quoteunquote.cloud.CloudServiceSend;
 import com.github.jameshnsears.quoteunquote.configure.ActivityConfigure;
@@ -21,12 +24,12 @@ import com.github.jameshnsears.quoteunquote.configure.fragment.event.PreferenceE
 import com.github.jameshnsears.quoteunquote.database.NoNextQuotationAvailableException;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.listview.ListViewService;
-import com.github.jameshnsears.quoteunquote.logging.MethodLineLoggingTree;
-import com.github.jameshnsears.quoteunquote.preference.PreferenceFacade;
 import com.github.jameshnsears.quoteunquote.report.ActivityReport;
-import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
+import com.github.jameshnsears.quoteunquote.utils.logging.MethodLineLoggingTree;
+import com.github.jameshnsears.quoteunquote.utils.preference.PreferenceFacade;
+import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
 
 import timber.log.Timber;
 
@@ -34,9 +37,10 @@ import static android.appwidget.AppWidgetManager.ACTION_APPWIDGET_DISABLED;
 
 public final class QuoteUnquoteWidget extends AppWidgetProvider {
     private static volatile boolean receiversRegistered = false;
+    @Nullable
     private QuoteUnquoteModel quoteUnquoteModel;
 
-    private static void registerReceivers(Context contextIn) {
+    private static void registerReceivers(@NonNull Context contextIn) {
         if (receiversRegistered) {
             return;
         }
@@ -59,7 +63,8 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         receiversRegistered = true;
     }
 
-    public synchronized QuoteUnquoteModel getQuoteUnquoteModelInstance(final Context context) {
+    @NonNull
+    public synchronized QuoteUnquoteModel getQuoteUnquoteModelInstance(@NonNull final Context context) {
         if (quoteUnquoteModel == null) {
             quoteUnquoteModel = new QuoteUnquoteModel(context);
         }
@@ -67,7 +72,7 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         return quoteUnquoteModel;
     }
 
-    public void shutdownQuoteUnquoteModel(final Context context) {
+    public void shutdownQuoteUnquoteModel(@NonNull final Context context) {
         if (quoteUnquoteModel != null) {
             getQuoteUnquoteModelInstance(context).shutdown();
             quoteUnquoteModel = null;
@@ -75,8 +80,9 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onEnabled(final Context context) {
-        CloudFavouritesHelper.setLocalCode(context);
+    public void onEnabled(@NonNull final Context context) {
+        final PreferenceContent preferenceContent = new PreferenceContent(0, context);
+        preferenceContent.setContentFavouritesLocalCode(CloudFavouritesHelper.getLocalCode());
 
         if (BuildConfig.DEBUG) {
             if (Timber.treeCount() == 0) {
@@ -88,7 +94,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] widgetIds) {
+    public void onUpdate(
+            @NonNull final Context context,
+            @NonNull final AppWidgetManager appWidgetManager,
+            @NonNull final int[] widgetIds) {
         registerReceivers(context);
 
         final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.quote_unquote_widget);
@@ -148,7 +157,7 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onReceive(final Context context, final Intent intent) {
+    public void onReceive(@NonNull final Context context, @NonNull final Intent intent) {
         super.onReceive(context, intent);
 
         final int widgetId = intent.getIntExtra(
@@ -219,22 +228,27 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void onReceiveActivityFinishedReport(final int widgetId, final AppWidgetManager appWidgetManager) {
+    private void onReceiveActivityFinishedReport(
+            final int widgetId, @NonNull final AppWidgetManager appWidgetManager) {
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.listViewQuotation);
     }
 
-    private void onReceiveDeviceUnlock(final Context context, final AppWidgetManager appWidgetManager) {
+    private void onReceiveDeviceUnlock(
+            @NonNull final Context context,
+            @NonNull final AppWidgetManager appWidgetManager) {
         unlockDevice(context, appWidgetManager);
     }
 
-    private void onReceiveToolbarPressedShare(final Context context, final int widgetId) {
+    private void onReceiveToolbarPressedShare(@NonNull final Context context, final int widgetId) {
         context.startActivity(IntentFactoryHelper.createIntentShare(
                 context.getResources().getString(R.string.app_name),
                 getQuoteUnquoteModelInstance(context).getNext(widgetId, new PreferenceContent(widgetId, context).getContentSelection()).theQuotation()));
     }
 
     private void onReceiveToolbarPressedFavourite(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         final PreferenceContent preferenceContent = new PreferenceContent(widgetId, context);
 
         getQuoteUnquoteModelInstance(context).toggleFavourite(widgetId, getQuoteUnquoteModelInstance(context).getNext(
@@ -249,7 +263,9 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     private void onReceiveToolbarPressedFirst(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         ToastHelper.makeToast(context, context.getString(R.string.widget_button_first_toast), Toast.LENGTH_LONG);
 
         getQuoteUnquoteModelInstance(context).deletePrevious(widgetId, new PreferenceContent(widgetId, context).getContentSelection());
@@ -259,23 +275,28 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
 
     private void onReceiveToolbarPressedPrevious(
             final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
-        // TODO
-
         updateWidgetView(context, widgetId, appWidgetManager);
     }
 
     private void onReceiveToolbarPressedNextRandom(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         onReceiveToolbarPressedNext(context, widgetId, appWidgetManager, true);
     }
 
     private void onReceiveToolbarPressedNextSequential(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         onReceiveToolbarPressedNext(context, widgetId, appWidgetManager, false);
     }
 
     private void onReceiveToolbarPressedNext(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager, final boolean randomNext) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager,
+            final boolean randomNext) {
         final PreferenceContent preferenceContent = new PreferenceContent(widgetId, context);
 
         try {
@@ -288,7 +309,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     private void onReceiveDailyAlarm(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager, final DailyAlarm dailyAlarm) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager,
+            @NonNull final DailyAlarm dailyAlarm) {
         dailyAlarm.setDailyAlarm();
         try {
             getQuoteUnquoteModelInstance(context)
@@ -300,17 +324,26 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void updateWidgetView(final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+    private void updateWidgetView(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         toggleFavouriteColour(context, widgetId, appWidgetManager);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.listViewQuotation);
     }
 
-    private void onReceiveActivityFinishedConfiguration(final int widgetId, final AppWidgetManager appWidgetManager, final DailyAlarm dailyAlarm) {
+    private void onReceiveActivityFinishedConfiguration(
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager,
+            @NonNull final DailyAlarm dailyAlarm) {
         dailyAlarm.setDailyAlarm();
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.listViewQuotation);
     }
 
-    private void setTransparency(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setTransparency(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         logWidgetId(widgetId);
 
         final PreferenceAppearance preferenceAppearance = new PreferenceAppearance(widgetId, context);
@@ -337,7 +370,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         Timber.d("widgetId=%d", widgetId);
     }
 
-    private void setToolbarButtonsVisibility(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonsVisibility(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         logWidgetId(widgetId);
 
         setToolbarButtonVisibilityFirst(context, widgetId, remoteViews);
@@ -346,12 +382,15 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         setToolbarButtonVisibilityFavourite(context, widgetId, remoteViews);
         setToolbarButtonVisibilityShare(context, widgetId, remoteViews);
         setToolbarButtonVisibilityRandom(context, widgetId, remoteViews);
-        setToolbarButtonVisibilitySequntial(context, widgetId, remoteViews);
+        setToolbarButtonVisibilitySequential(context, widgetId, remoteViews);
 
         setHeartColour(context, widgetId, remoteViews);
     }
 
-    private void setToolbarButtonVisibilityFirst(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityFirst(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarFirst()) {
             remoteViews.setViewVisibility(R.id.imageButtonFirst, View.VISIBLE);
         } else {
@@ -359,7 +398,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilityPrevious(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityPrevious(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarPrevious()) {
             remoteViews.setViewVisibility(R.id.imageButtonPrevious, View.VISIBLE);
         } else {
@@ -367,7 +409,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilityReport(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityReport(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarReport()) {
             remoteViews.setViewVisibility(R.id.imageButtonReport, View.VISIBLE);
         } else {
@@ -375,7 +420,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilityFavourite(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityFavourite(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarFavourite()) {
             remoteViews.setViewVisibility(R.id.imageButtonFavourite, View.VISIBLE);
         } else {
@@ -383,7 +431,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilityShare(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityShare(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarShare()) {
             remoteViews.setViewVisibility(R.id.imageButtonShare, View.VISIBLE);
         } else {
@@ -391,7 +442,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilityRandom(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilityRandom(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarRandom()) {
             remoteViews.setViewVisibility(R.id.imageButtonNextRandom, View.VISIBLE);
         } else {
@@ -399,7 +453,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void setToolbarButtonVisibilitySequntial(final Context context, final int widgetId, final RemoteViews remoteViews) {
+    private void setToolbarButtonVisibilitySequential(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         if (new PreferenceAppearance(widgetId, context).getAppearanceToolbarSequential()) {
             remoteViews.setViewVisibility(R.id.imageButtonNextSequential, View.VISIBLE);
         } else {
@@ -409,7 +466,9 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
 
 
     private void toggleFavouriteColour(
-            final Context context, final int widgetId, final AppWidgetManager appWidgetManager) {
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final AppWidgetManager appWidgetManager) {
         logWidgetId(widgetId);
 
         final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.quote_unquote_widget);
@@ -421,8 +480,10 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(widgetId, remoteViews);
     }
 
-    private void setHeartColour(final Context context, final int widgetId, final RemoteViews remoteViews) {
-
+    private void setHeartColour(
+            @NonNull final Context context,
+            final int widgetId,
+            @NonNull final RemoteViews remoteViews) {
         final QuotationEntity quotationEntity
                 = getQuoteUnquoteModelInstance(context).getNext(widgetId, new PreferenceContent(widgetId, context).getContentSelection());
 
@@ -435,7 +496,9 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
         }
     }
 
-    private void unlockDevice(final Context context, final AppWidgetManager appWidgetManager) {
+    private void unlockDevice(
+            @NonNull final Context context,
+            @NonNull final AppWidgetManager appWidgetManager) {
         for (final int widgetId : appWidgetManager.getAppWidgetIds(new ComponentName(context, QuoteUnquoteWidget.class))) {
 
             if (new PreferenceEvent(widgetId, context).getEventDeviceUnlock()) {
@@ -452,7 +515,9 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onDeleted(final Context context, final int[] widgetIds) {
+    public void onDeleted(
+            @NonNull final Context context,
+            @NonNull final int[] widgetIds) {
         // a widget instance is removed from the home screen
         super.onDeleted(context, widgetIds);
 
@@ -468,7 +533,7 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onDisabled(final Context context) {
+    public void onDisabled(@NonNull final Context context) {
         // last widget instance deleted
         super.onDisabled(context);
 

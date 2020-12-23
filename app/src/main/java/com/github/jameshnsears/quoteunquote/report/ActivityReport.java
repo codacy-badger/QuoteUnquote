@@ -10,16 +10,18 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.jameshnsears.quoteunquote.QuoteUnquoteWidget;
 import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.audit.AuditEventHelper;
 import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.databinding.ActivityReportBinding;
-import com.github.jameshnsears.quoteunquote.ui.ToastHelper;
 import com.github.jameshnsears.quoteunquote.utils.IntentFactoryHelper;
+import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
+import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import timber.log.Timber;
 
 public final class ActivityReport extends AppCompatActivity {
+    @Nullable
     private ActivityReportBinding activityReportBinding;
+    @Nullable
     private QuoteUnquoteWidget quoteUnquoteWidget;
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -102,6 +106,7 @@ public final class ActivityReport extends AppCompatActivity {
         return false;
     }
 
+    @NonNull
     public ConcurrentHashMap<String, String> getAuditProperties() {
         final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
 

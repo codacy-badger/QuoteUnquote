@@ -11,6 +11,9 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.R;
 import com.github.jameshnsears.quoteunquote.configure.fragment.FragmentCommon;
 import com.github.jameshnsears.quoteunquote.databinding.FragmentAppearanceBinding;
@@ -19,13 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentAppearance extends FragmentCommon {
+    @Nullable
     public FragmentAppearanceBinding fragmentAppearanceBinding;
+    @Nullable
     public PreferenceAppearance preferenceAppearance;
 
     protected FragmentAppearance(final int widgetId) {
         super(widgetId);
     }
 
+    @NonNull
     public static FragmentAppearance newInstance(final int widgetId) {
         final FragmentAppearance fragment = new FragmentAppearance(widgetId);
         fragment.setArguments(null);
@@ -33,8 +39,11 @@ public class FragmentAppearance extends FragmentCommon {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+    @NonNull
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            final ViewGroup container,
+            final Bundle savedInstanceState) {
         preferenceAppearance = new PreferenceAppearance(this.widgetId, this.getContext());
 
         fragmentAppearanceBinding = FragmentAppearanceBinding.inflate(getLayoutInflater());
@@ -48,7 +57,8 @@ public class FragmentAppearance extends FragmentCommon {
     }
 
     @Override
-    public void onViewCreated(final View view, final Bundle savedInstanceState) {
+    public void onViewCreated(
+            @NonNull final View view, final Bundle savedInstanceState) {
         createListenerTransparency();
         createListenerTextColour();
         createListenerTextSize();
@@ -123,7 +133,9 @@ public class FragmentAppearance extends FragmentCommon {
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-                        preferenceAppearance.setAppearanceTransparency(progress);
+                        if (preferenceAppearance.getAppearanceTransparency() != progress) {
+                            preferenceAppearance.setAppearanceTransparency(progress);
+                        }
                     }
 
                     @Override
@@ -143,7 +155,10 @@ public class FragmentAppearance extends FragmentCommon {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long selectedItemId) {
-                preferenceAppearance.setAppearanceTextColour(spinner.getSelectedItem().toString());
+                String selectedItem = spinner.getSelectedItem().toString();
+                if (!preferenceAppearance.getAppearanceTextColour().equals(selectedItem)) {
+                    preferenceAppearance.setAppearanceTextColour(selectedItem);
+                }
             }
 
             @Override
@@ -158,7 +173,10 @@ public class FragmentAppearance extends FragmentCommon {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long selectedItemId) {
-                preferenceAppearance.setAppearanceTextSize(Integer.parseInt(spinner.getSelectedItem().toString()));
+                int selectedItem = Integer.parseInt(spinner.getSelectedItem().toString());
+                if (preferenceAppearance.getAppearanceTextSize() != selectedItem) {
+                    preferenceAppearance.setAppearanceTextSize(selectedItem);
+                }
             }
 
             @Override
@@ -179,7 +197,7 @@ public class FragmentAppearance extends FragmentCommon {
                         sizeIntegerArray) {
 
                     @Override
-                    public View getView(final int position, final View convertView, final ViewGroup parent) {
+                    public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
                         return getTextSizeDefault(
                                 position,
                                 super.getView(position, convertView, parent),
@@ -187,7 +205,7 @@ public class FragmentAppearance extends FragmentCommon {
                     }
 
                     @Override
-                    public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+                    public View getDropDownView(final int position, final View convertView, @NonNull final ViewGroup parent) {
                         return getTextSizeDefault(
                                 position,
                                 super.getDropDownView(position, convertView, parent),
@@ -199,7 +217,9 @@ public class FragmentAppearance extends FragmentCommon {
         setTextSizePreference(sizeIntegerArray, fragmentAppearanceBinding.spinnerSize);
     }
 
-    private void setTextSizePreference(final List<Integer> sizeIntegerArray, final Spinner spinnerSize) {
+    private void setTextSizePreference(
+            @NonNull final List<Integer> sizeIntegerArray,
+            @NonNull final Spinner spinnerSize) {
         final int testSizePreference = this.preferenceAppearance.getAppearanceTextSize();
         if (testSizePreference == -1) {
             spinnerSize.setSelection(2);
@@ -215,12 +235,17 @@ public class FragmentAppearance extends FragmentCommon {
         }
     }
 
-    private View getTextSizeDefault(final int position, final View view, final List<Integer> sizeIntegerArray) {
+    @NonNull
+    public View getTextSizeDefault(
+            final int position,
+            @NonNull final View view,
+            @NonNull final List<Integer> sizeIntegerArray) {
         final TextView textView = (TextView) view;
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, sizeIntegerArray.get(position).floatValue());
         return view;
     }
 
+    @NonNull
     private List<Integer> getTextSizeIntegerArray(final int... sizeArray) {
         final List<Integer> sizeIntegerArray = new ArrayList<>();
         for (final int size : sizeArray) {

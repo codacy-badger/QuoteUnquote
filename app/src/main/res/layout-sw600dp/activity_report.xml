@@ -30,7 +30,6 @@
         android:paddingVertical="10dp">
 
         <TextView
-            android:id="@+id/textViewReason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/activity_report_reason"
@@ -57,7 +56,6 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/textViewReportInstructions01"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="5dp"
@@ -65,7 +63,6 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/textViewReportInstructions02"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="5dp"
@@ -75,7 +72,6 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/textViewReportInstructions03"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="5dp"
@@ -92,7 +88,6 @@
         android:paddingTop="20dp">
 
         <Button
-            android:id="@+id/cancel_button"
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:background="@drawable/corners_buttons"

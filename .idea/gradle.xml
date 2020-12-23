@@ -11,7 +11,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/utilsLibrary" />
+            <option value="$PROJECT_DIR$/cloudLib" />
+            <option value="$PROJECT_DIR$/utilsLib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

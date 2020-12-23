@@ -2,6 +2,7 @@ package com.github.jameshnsears.quoteunquote.database;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -60,6 +61,7 @@ public final class DatabaseRepositoryFake extends DatabaseRepository {
     }
 
     @Override
+    @NonNull
     public Single<Integer> countAll() {
         return quotationDAO.countAll();
     }
@@ -68,7 +70,8 @@ public final class DatabaseRepositoryFake extends DatabaseRepository {
         return reportedDAO.countReported();
     }
 
-    public QuotationEntity getQuotation(final String digest) {
+    @NonNull
+    public QuotationEntity getQuotation(@NonNull final String digest) {
         return quotationDAO.getQuotation(digest);
     }
 }

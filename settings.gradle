@@ -1,2 +1,3 @@
-include ':utilsLibrary'
+include ':utilsLib'
+include ':cloudLib'
 include ':app'

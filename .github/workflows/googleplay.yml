@@ -25,6 +25,11 @@ jobs:
           echo "$GOOGLE_SERVICES" | base64 --decode > app/google-services.json
           ls -al
 
+      - name: static analysis
+        run: |
+          set -x
+          ./gradlew lintGooglePlayDebug ktlint datekt
+
       - name: test + androidTest
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -44,11 +49,6 @@ jobs:
         run: |
           set -x
           ./gradlew coveralls
-
-      - name: static analysis
-        run: |
-          set -x
-          ./gradlew lint ktlint datekt
 
       - name: codecov
         run: |

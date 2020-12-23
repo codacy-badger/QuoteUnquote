@@ -2,6 +2,9 @@ package com.github.jameshnsears.quoteunquote.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.database.history.AbstractHistoryDatabase;
 import com.github.jameshnsears.quoteunquote.database.history.FavouriteDAO;
 import com.github.jameshnsears.quoteunquote.database.history.FavouriteEntity;
@@ -23,19 +26,41 @@ import io.reactivex.Single;
 import timber.log.Timber;
 
 public class DatabaseRepository {
+    @NonNull
     public static final String DEFAULT_QUOTATION_DIGEST = "1624c314";
+    @NonNull
     protected final SecureRandom secureRandom = new SecureRandom();
+    @Nullable
     protected AbstractQuotationDatabase abstractQuotationDatabase;
+    @Nullable
     protected QuotationDAO quotationDAO;
+    @Nullable
     protected AbstractHistoryDatabase abstractHistoryDatabase;
+    @Nullable
     protected PreviousDAO previousDAO;
+    @Nullable
     protected FavouriteDAO favouriteDAO;
+    @Nullable
     protected ReportedDAO reportedDAO;
 
     public DatabaseRepository() {
     }
 
-    public DatabaseRepository(final Context context) {
+    public DatabaseRepository(@NonNull final Context context) {
+        open(context);
+    }
+
+    public void close() {
+        if (abstractQuotationDatabase.isOpen()) {
+            abstractQuotationDatabase.close();
+        }
+
+        if (abstractHistoryDatabase.isOpen()) {
+            abstractHistoryDatabase.close();
+        }
+    }
+
+    public void open(@NonNull Context context) {
         abstractQuotationDatabase = AbstractQuotationDatabase.getDatabase(context);
         quotationDAO = abstractQuotationDatabase.quotationsDAO();
         abstractHistoryDatabase = AbstractHistoryDatabase.getDatabase(context);
@@ -48,11 +73,14 @@ public class DatabaseRepository {
         return quotationDAO.countAll();
     }
 
-    public int countPrevious(final int widgetId, final ContentSelection contentSelection) {
+    public int countPrevious(final int widgetId, @NonNull final ContentSelection contentSelection) {
         return previousDAO.countPrevious(widgetId, contentSelection);
     }
 
-    public int countPrevious(final int widgetId, final ContentSelection contentSelection, final String criteria) {
+    public int countPrevious(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection,
+            @NonNull final String criteria) {
         List<String> digestsPrevious;
         List<String> availableDigests;
 
@@ -74,21 +102,25 @@ public class DatabaseRepository {
         return countDigestInPrevious;
     }
 
+    @NonNull
     public Single<Integer> countFavourites() {
         return favouriteDAO.countFavourites();
     }
 
-    public QuotationEntity getNext(final int widgetId, final ContentSelection contentSelection) {
+    @NonNull
+    public QuotationEntity getNext(final int widgetId, @NonNull final ContentSelection contentSelection) {
         return getQuotation(previousDAO.getNext(widgetId, contentSelection).digest);
     }
 
-    public List<String> getPrevious(final int widgetId, final ContentSelection contentSelection) {
+    @NonNull
+    public List<String> getPrevious(final int widgetId, @NonNull final ContentSelection contentSelection) {
         final List<String> previousOrdered = previousDAO.getPrevious(widgetId, contentSelection);
         logDigests(previousOrdered);
 
         return previousOrdered;
     }
 
+    @NonNull
     public List<String> getFavourites() {
         final List<String> favouriteQuotations = favouriteDAO.getFavourites();
         logDigests(favouriteQuotations);
@@ -96,15 +128,18 @@ public class DatabaseRepository {
         return favouriteQuotations;
     }
 
+    @NonNull
     public Single<List<AuthorPOJO>> getAuthorsWithAtLeastFiveQuotations() {
         return quotationDAO.authorsWithAtLeastFiveQuotations();
     }
 
+    @NonNull
     public Single<List<AuthorPOJO>> getAuthors() {
         return quotationDAO.authors();
     }
 
-    public Integer countQuotationsText(final String text) {
+    @NonNull
+    public Integer countQuotationsText(@NonNull final String text) {
         if ("".equals(text)) {
             return 0;
         } else {
@@ -116,13 +151,16 @@ public class DatabaseRepository {
         return quotationDAO.getQuotation(digest);
     }
 
-    public void markAsPrevious(final int widgetId, final ContentSelection contentSelection, final String digest) {
+    public void markAsPrevious(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection,
+            @NonNull final String digest) {
         Timber.d("%d: contentType=%d; digest=%s", widgetId, contentSelection.getContentType(), digest);
 
         previousDAO.markAsPrevious(new PreviousEntity(widgetId, contentSelection, digest));
     }
 
-    public void markAsFavourite(final String digest) {
+    public void markAsFavourite(@NonNull final String digest) {
         Timber.d("digest=%s", digest);
 
         if (favouriteDAO.countIsFavourite(digest) == 0 && quotationDAO.getQuotation(digest) != null) {
@@ -130,14 +168,19 @@ public class DatabaseRepository {
         }
     }
 
-    public void markAsReported(final String digest) {
+    public void markAsReported(@NonNull final String digest) {
         if (reportedDAO.countIsReported(digest) == 0) {
             Timber.d("digest=%s", digest);
             reportedDAO.markAsReported(new ReportedEntity(digest));
         }
     }
 
-    public QuotationEntity getNext(final int widgetId, final ContentSelection contentSelection, final String searchString, final boolean randomNext)
+    @NonNull
+    public QuotationEntity getNext(
+            final int widgetId,
+            @NonNull final ContentSelection contentSelection,
+            @NonNull final String searchString,
+            final boolean randomNext)
             throws NoNextQuotationAvailableException {
         Timber.d("%d: contentType=%d; searchString=%s", widgetId, contentSelection.getContentType(), searchString);
 
@@ -183,11 +226,11 @@ public class DatabaseRepository {
         return getQuotation(availableQuotations.get(0));
     }
 
-    public int getRandomIndex(final List<String> availableNextQuotations) {
+    public int getRandomIndex(@NonNull final List<String> availableNextQuotations) {
         return secureRandom.nextInt(availableNextQuotations.size());
     }
 
-    private void logDigests(final List<String> digests) {
+    private void logDigests(@NonNull final List<String> digests) {
         int index = 0;
         for (final String digest : digests) {
             Timber.d("index=%d, digest=%s", index, digest);
@@ -195,7 +238,7 @@ public class DatabaseRepository {
         }
     }
 
-    public void deleteFavourite(final int widgetId, final String digest) {
+    public void deleteFavourite(final int widgetId, @NonNull final String digest) {
         Timber.d("%d: digest=%s", widgetId, digest);
         favouriteDAO.deleteFavourite(digest);
         previousDAO.deletePrevious(widgetId, ContentSelection.FAVOURITES, digest);
@@ -205,7 +248,7 @@ public class DatabaseRepository {
         favouriteDAO.deleteFavourites();
     }
 
-    public void deletePrevious(final int widgetId, final ContentSelection contentSelection) {
+    public void deletePrevious(final int widgetId, @NonNull final ContentSelection contentSelection) {
         Timber.d("%d: contentType=%d", widgetId, contentSelection.getContentType());
         previousDAO.deletePrevious(widgetId, contentSelection);
     }
@@ -223,11 +266,13 @@ public class DatabaseRepository {
         reportedDAO.deleteReported();
     }
 
-    public Integer countIsFavourite(final String digest) {
+    @NonNull
+    public Integer countIsFavourite(@NonNull final String digest) {
         return favouriteDAO.countIsFavourite(digest);
     }
 
-    public Integer countIsReported(final String digest) {
+    @NonNull
+    public Integer countIsReported(@NonNull final String digest) {
         return reportedDAO.countIsReported(digest);
     }
 }

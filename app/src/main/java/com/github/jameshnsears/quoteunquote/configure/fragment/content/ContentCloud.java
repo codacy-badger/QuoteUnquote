@@ -4,12 +4,17 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.jameshnsears.quoteunquote.cloud.CloudServiceReceive;
 
 public class ContentCloud {
+    @Nullable
     public CloudServiceReceive cloudServiceReceive;
     public boolean isServiceReceiveBound;
 
+    @NonNull
     public final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(final ComponentName name, final IBinder service) {

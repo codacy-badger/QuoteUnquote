@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    # macos has GPU for connectedGoogleplayDebugAndroidTest emulator
     runs-on: macos-latest
     strategy:
       matrix:
@@ -18,17 +17,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: prep env.
+      - name: static analysis
         run: |
           set -x
-          pwd
-          touch local.properties
-          echo "$GOOGLE_SERVICES" | base64 --decode > app/google-services.json
-          ls -al
+          ./gradlew lintFdroidDebug ktlint datekt
 
-      - name: test + androidTest
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: default
-          script: ./gradlew testFdroidDebugUnitTest connectedFdroidDebugAndroidTest --stacktrace
+          - name: test + androidTest
+            uses: reactivecircus/android-emulator-runner@v2
+            with:
+              api-level: ${{ matrix.api-level }}
+              target: default
+              script: ./gradlew testFdroidDebugUnitTest connectedFdroidDebugAndroidTest --stacktrace

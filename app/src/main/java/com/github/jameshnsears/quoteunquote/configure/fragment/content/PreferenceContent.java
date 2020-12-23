@@ -2,40 +2,46 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.content;
 
 import android.content.Context;
 
-import com.github.jameshnsears.quoteunquote.preference.PreferenceFacade;
+import androidx.annotation.NonNull;
+
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
+import com.github.jameshnsears.quoteunquote.utils.preference.PreferenceFacade;
 
 import timber.log.Timber;
 
 public class PreferenceContent extends PreferenceFacade {
-    public PreferenceContent(final int widgetId, final Context applicationContext) {
+    public PreferenceContent(final int widgetId, @NonNull final Context applicationContext) {
         super(widgetId, applicationContext);
     }
 
+    @NonNull
     public String getContentSelectionAuthorName() {
-        return preferenceHelper.getPreferenceString("CONTENT_AUTHOR_NAME");
+        return preferenceHelper.getPreferenceString(getPreferenceKey("CONTENT_AUTHOR_NAME"));
     }
 
-    public void setContentSelectionAuthorName(final String value) {
-        preferenceHelper.setPreference("CONTENT_AUTHOR_NAME", value);
+    public void setContentSelectionAuthorName(@NonNull final String value) {
+        preferenceHelper.setPreference(getPreferenceKey("CONTENT_AUTHOR_NAME"), value);
     }
 
+    @NonNull
     public String getContentFavouritesLocalCode() {
-        return preferenceHelper.getPreferenceString(getPreferenceKey(0, "CONTENT_FAVOURITES_LOCAL_CODE"));
+        return preferenceHelper.getPreferenceString(getPreferenceKey());
     }
 
-    public void setContentFavouritesLocalCode(final String value) {
-        preferenceHelper.setPreference(getPreferenceKey(0, "CONTENT_FAVOURITES_LOCAL_CODE"), value);
+    public void setContentFavouritesLocalCode(@NonNull final String value) {
+        preferenceHelper.setPreference(getPreferenceKey(), value);
     }
 
+    @NonNull
     public String getContentSelectionSearchText() {
         return preferenceHelper.getPreferenceString(getPreferenceKey("CONTENT_SEARCH_TEXT"));
     }
 
-    public void setContentSelectionSearchText(final String value) {
+    public void setContentSelectionSearchText(@NonNull final String value) {
         preferenceHelper.setPreference(getPreferenceKey("CONTENT_SEARCH_TEXT"), value);
     }
 
+    @NonNull
     public ContentSelection getContentSelection() {
         if (preferenceHelper.getPreferenceBoolean(getPreferenceKey("CONTENT_AUTHOR"), false)) {
             return ContentSelection.AUTHOR;
@@ -52,7 +58,7 @@ public class PreferenceContent extends PreferenceFacade {
         return ContentSelection.ALL;
     }
 
-    public void setContentSelection(final ContentSelection contentSelection) {
+    public void setContentSelection(@NonNull final ContentSelection contentSelection) {
         switch (contentSelection) {
             case ALL:
                 preferenceHelper.setPreference(getPreferenceKey("CONTENT_ALL"), true);
@@ -80,6 +86,10 @@ public class PreferenceContent extends PreferenceFacade {
                 preferenceHelper.setPreference(getPreferenceKey("CONTENT_AUTHOR"), false);
                 preferenceHelper.setPreference(getPreferenceKey("CONTENT_FAVOURITES"), false);
                 preferenceHelper.setPreference(getPreferenceKey("CONTENT_SEARCH"), true);
+                break;
+
+            default:
+                Timber.e(contentSelection.toString());
                 break;
         }
     }

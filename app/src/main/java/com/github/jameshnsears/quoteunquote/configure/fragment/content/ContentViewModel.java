@@ -2,6 +2,8 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.content;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.github.jameshnsears.quoteunquote.BuildConfig;
@@ -9,7 +11,6 @@ import com.github.jameshnsears.quoteunquote.cloud.CloudFavouritesHelper;
 import com.github.jameshnsears.quoteunquote.cloud.RequestSave;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.quotation.AuthorPOJO;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,23 +24,29 @@ import io.reactivex.Single;
 import timber.log.Timber;
 
 public class ContentViewModel extends AndroidViewModel {
+    @NonNull
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    @Nullable
     public List<AuthorPOJO> authorPOJOList;
+    @Nullable
     protected DatabaseRepository databaseRepository;
 
-    public ContentViewModel(final Application application) {
+    public ContentViewModel(@NonNull final Application application) {
         super(application);
         databaseRepository = new DatabaseRepository(application);
     }
 
     public void shutdown() {
         executorService.shutdown();
+        databaseRepository.close();
     }
 
+    @NonNull
     public Single<Integer> countAll() {
         return databaseRepository.countAll();
     }
 
+    @NonNull
     public Single<List<AuthorPOJO>> authors() {
         if (BuildConfig.USE_PROD_DB) {
             return databaseRepository.getAuthorsWithAtLeastFiveQuotations();
@@ -48,7 +55,8 @@ public class ContentViewModel extends AndroidViewModel {
         }
     }
 
-    public List<String> authorsSorted(final List<AuthorPOJO> unsortedAuthorPOJOList) {
+    @NonNull
+    public List<String> authorsSorted(@NonNull final List<AuthorPOJO> unsortedAuthorPOJOList) {
         this.authorPOJOList = unsortedAuthorPOJOList;
 
         Collections.sort(unsortedAuthorPOJOList);
@@ -59,7 +67,7 @@ public class ContentViewModel extends AndroidViewModel {
         return authors;
     }
 
-    public int countAuthorQuotations(final String author) {
+    public int countAuthorQuotations(@NonNull final String author) {
         for (final AuthorPOJO authorPOJO : this.authorPOJOList) {
             if (authorPOJO.author.equals(author)) {
                 return authorPOJO.count;
@@ -68,7 +76,7 @@ public class ContentViewModel extends AndroidViewModel {
         return -1;
     }
 
-    public int authorsIndex(final String author) {
+    public int authorsIndex(@NonNull final String author) {
         int index = 0;
         for (final AuthorPOJO authorPOJO : this.authorPOJOList) {
             if (authorPOJO.author.equals(author)) {
@@ -79,14 +87,17 @@ public class ContentViewModel extends AndroidViewModel {
         return -1;
     }
 
+    @NonNull
     public Single<Integer> countFavourites() {
         return databaseRepository.countFavourites();
     }
 
-    public Integer countQuotationWithText(final String text) {
+    @NonNull
+    public Integer countQuotationWithText(@NonNull final String text) {
         return databaseRepository.countQuotationsText(text);
     }
 
+    @NonNull
     public String getFavouritesToSend() {
         final Future<String> future = executorService.submit(() -> {
 
@@ -94,8 +105,7 @@ public class ContentViewModel extends AndroidViewModel {
             requestSave.code = CloudFavouritesHelper.getLocalCode();
             requestSave.digests = new ArrayList<>(databaseRepository.getFavourites());
 
-            Gson gson = new Gson();
-            return gson.toJson(requestSave);
+            return CloudFavouritesHelper.sendRequest(requestSave);
         });
 
         try {
