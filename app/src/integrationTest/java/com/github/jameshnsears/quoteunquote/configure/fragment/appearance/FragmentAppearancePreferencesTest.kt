@@ -15,7 +15,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
-class AppearancePreferencesTest : ShadowLoggingHelper() {
+class FragmentAppearancePreferencesTest : ShadowLoggingHelper() {
     class FragmentAppearanceDouble : FragmentAppearance {
         constructor() : super(1)
     }

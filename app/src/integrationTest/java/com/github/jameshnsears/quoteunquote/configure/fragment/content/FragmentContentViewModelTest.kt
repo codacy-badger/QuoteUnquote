@@ -9,7 +9,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
-class ContentViewModelTest {
+class FragmentContentViewModelTest {
     @Test
     fun `todo - authorsSorted`() {
         fail("todo")

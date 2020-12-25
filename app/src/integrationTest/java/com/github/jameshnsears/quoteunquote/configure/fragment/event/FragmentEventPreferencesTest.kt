@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
-class EventPreferencesTest : ShadowLoggingHelper() {
+class FragmentEventPreferencesTest : ShadowLoggingHelper() {
     class FragmentEventDouble : FragmentEvent {
         constructor() : super(1)
     }
