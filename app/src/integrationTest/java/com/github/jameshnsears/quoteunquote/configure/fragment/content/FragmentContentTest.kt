@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.jameshnsears.quoteunquote.utils.BuildConfig
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection
 import com.github.jameshnsears.quoteunquote.utils.sqlite.SqliteLoaderHelper
+import junit.framework.Assert.fail
 import junit.framework.TestCase.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -18,7 +19,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [Build.VERSION_CODES.P])
 class FragmentContentTest : SqliteLoaderHelper() {
     @Test
-    fun `change content selection`() {
+    fun changeContentSelection() {
         with(launchFragment<FragmentContentDouble>()) {
             onFragment { fragment ->
                 // default content selection
@@ -52,7 +53,7 @@ class FragmentContentTest : SqliteLoaderHelper() {
     }
 
     @Test
-    fun `confirm initial settings`() {
+    fun confirmInitialContentSelections() {
         with(launchFragment<FragmentContentDouble>()) {
             onFragment { fragment ->
                 assertTrue(fragment.preferenceContent?.contentSelection == ContentSelection.ALL)
@@ -88,19 +89,18 @@ class FragmentContentTest : SqliteLoaderHelper() {
         }
     }
 
+    @Test
+    fun `todo - authorSearch`() {
+        fail("todo")
+    }
 
-//    @Test
-//    fun `todo - authorSearch`() {
-//        fail("todo")
-//    }
-//
-//    @Test
-//    fun `todo - favouritesSend`() {
-//        fail("todo")
-//    }
-//
-//    @Test
-//    fun `todo - favouritesReceive`() {
-//        fail("todo")
-//    }}
+    @Test
+    fun `todo - favouritesSend`() {
+        fail("todo")
+    }
+
+    @Test
+    fun `todo - favouritesReceive`() {
+        fail("todo")
+    }
 }

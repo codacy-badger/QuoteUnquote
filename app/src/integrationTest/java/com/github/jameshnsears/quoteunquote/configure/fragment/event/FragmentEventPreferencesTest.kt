@@ -3,7 +3,6 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.event
 import android.os.Build
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.jameshnsears.quoteunquote.configure.IntentHelper
 import com.github.jameshnsears.quoteunquote.utils.logging.ShadowLoggingHelper
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.MatcherAssert.assertThat
@@ -16,10 +15,6 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
 class FragmentEventPreferencesTest : ShadowLoggingHelper() {
-    class FragmentEventDouble : FragmentEvent {
-        constructor() : super(IntentHelper.WIDGET_ID)
-    }
-
     @Test
     fun `confirm initial preferences`() {
         with(launchFragment<FragmentEventDouble>()) {
