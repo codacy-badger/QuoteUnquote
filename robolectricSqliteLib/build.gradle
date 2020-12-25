@@ -1,0 +1,44 @@
+apply plugin: 'java'
+
+ext.almworks_version = '1.0.392'
+
+configurations {
+    jni
+}
+
+task copyNatives(type: Copy) {
+    outputs.dir file("${buildDir}/resources/main")
+
+    project.afterEvaluate {
+        configurations.jni.files.each { File file ->
+            def binaryMatch = file.name =~ /.*\.(so|dll|dylib)/
+            if (binaryMatch) {
+                inputs.file file
+                from file
+            }
+        }
+    }
+
+    into project.file("$buildDir/resources/main/libs")
+}
+
+artifacts {
+    archives jar
+}
+
+jar {
+    dependsOn copyNatives
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.almworks.sqlite4java:sqlite4java:' + almworks_version
+    implementation 'com.google.guava:guava:30.0-jre'
+
+    jni 'com.almworks.sqlite4java:libsqlite4java-osx:' + almworks_version
+    jni 'com.almworks.sqlite4java:libsqlite4java-linux-amd64:' + almworks_version
+    jni 'com.almworks.sqlite4java:libsqlite4java-linux-i386:' + almworks_version
+    jni 'com.almworks.sqlite4java:sqlite4java-win32-x64:' + almworks_version
+    jni 'com.almworks.sqlite4java:sqlite4java-win32-x86:' + almworks_version
+}
