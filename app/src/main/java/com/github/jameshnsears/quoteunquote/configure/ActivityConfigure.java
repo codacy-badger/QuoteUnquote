@@ -46,9 +46,7 @@ public class ActivityConfigure extends AppCompatActivity {
     public void finish() {
         ensureFragmentContentSearchConsistency();
 
-        if (widgetId != -1) {
-            broadcastFinishIntent();
-        }
+        broadcastFinishIntent();
 
         super.finish();
     }

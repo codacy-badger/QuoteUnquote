@@ -2,8 +2,9 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.content
 
 import android.os.Bundle
 import android.view.View
+import com.github.jameshnsears.quoteunquote.configure.IntentHelper
 
-class FragmentContentDouble(widgetId: Int) : FragmentContent(widgetId) {
+class FragmentContentDouble(widgetId: Int = IntentHelper.WIDGET_ID) : FragmentContent(widgetId) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         createListenerRadioGroup()
         createListenerAuthor()

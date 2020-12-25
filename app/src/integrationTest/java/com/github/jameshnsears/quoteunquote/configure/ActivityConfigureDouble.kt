@@ -8,4 +8,8 @@ class ActivityConfigureDouble : ActivityConfigure() {
     override fun getFragmentContentNewInstance(): FragmentContentDouble {
         return FragmentContentDouble.newInstance(widgetId)
     }
+
+    override fun broadcastFinishIntent() {
+        // don't broadcast anything for test(s)
+    }
 }

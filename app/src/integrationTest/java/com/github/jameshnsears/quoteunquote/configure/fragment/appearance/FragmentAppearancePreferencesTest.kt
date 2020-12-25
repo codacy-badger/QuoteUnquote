@@ -3,6 +3,7 @@ package com.github.jameshnsears.quoteunquote.configure.fragment.appearance
 import android.os.Build
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.jameshnsears.quoteunquote.configure.IntentHelper
 import com.github.jameshnsears.quoteunquote.utils.logging.ShadowLoggingHelper
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual.equalTo
@@ -17,7 +18,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [Build.VERSION_CODES.P])
 class FragmentAppearancePreferencesTest : ShadowLoggingHelper() {
     class FragmentAppearanceDouble : FragmentAppearance {
-        constructor() : super(1)
+        constructor() : super(IntentHelper.WIDGET_ID)
     }
 
     @Test
