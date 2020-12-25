@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.github.jameshnsears.quoteunquote.R;
-import com.github.jameshnsears.quoteunquote.configure.fragment.content.FragmentContent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.ContentFragment;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.utils.audit.AuditEventHelper;
 import com.github.jameshnsears.quoteunquote.utils.ui.ToastHelper;
@@ -41,7 +41,7 @@ public final class CloudServiceReceive extends Service {
     }
 
     public void receive(
-            @NonNull final FragmentContent fragmentContent, @NonNull final String remoteCodeValue) {
+            @NonNull final ContentFragment contentFragment, @NonNull final String remoteCodeValue) {
         new Thread(() -> {
             final Context context = CloudServiceReceive.this.getApplicationContext();
 
@@ -70,9 +70,9 @@ public final class CloudServiceReceive extends Service {
                         final DatabaseRepository databaseRepository = new DatabaseRepository(context);
                         favouritesReceived.forEach(databaseRepository::markAsFavourite);
 
-                        if (fragmentContent != null) {
-                            fragmentContent.setFavouriteCount();
-                            fragmentContent.enableFavouriteButtonReceive(true);
+                        if (contentFragment != null) {
+                            contentFragment.setFavouriteCount();
+                            contentFragment.enableFavouriteButtonReceive(true);
                         }
 
                         final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();

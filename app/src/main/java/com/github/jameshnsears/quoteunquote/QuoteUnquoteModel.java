@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.ContentPreferences;
 import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
 import com.github.jameshnsears.quoteunquote.database.NoNextQuotationAvailableException;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
@@ -120,11 +120,11 @@ public class QuoteUnquoteModel {
 
     @NonNull
     public String getPreferencesAuthorSearch(final int widgetId) {
-        return new PreferenceContent(widgetId, context).getContentSelectionAuthorName();
+        return new ContentPreferences(widgetId, context).getContentSelectionAuthorName();
     }
 
     public String getPreferencesTextSearch(final int widgetId) {
-        return new PreferenceContent(widgetId, context).getContentSelectionSearchText();
+        return new ContentPreferences(widgetId, context).getContentSelectionSearchText();
     }
 
     @NonNull
@@ -242,7 +242,7 @@ public class QuoteUnquoteModel {
     }
 
     public boolean isRadioButtonFavouriteSelected(final int widgetId) {
-        return new PreferenceContent(widgetId, context).getContentSelection().equals(ContentSelection.FAVOURITES);
+        return new ContentPreferences(widgetId, context).getContentSelection().equals(ContentSelection.FAVOURITES);
     }
 
     public boolean isFavourite(final int widgetId, @NonNull final String digest) {
@@ -334,7 +334,7 @@ public class QuoteUnquoteModel {
     }
 
     public ContentSelection getSelectedContentType(final int widgetId) {
-        return new PreferenceContent(widgetId, context).getContentSelection();
+        return new ContentPreferences(widgetId, context).getContentSelection();
     }
 
     public boolean isReported(final int widgetId) {

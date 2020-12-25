@@ -1,10 +1,11 @@
-package com.github.jameshnsears.quoteunquote;
+package com.github.jameshnsears.quoteunquote.database;
+
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.test.core.app.ApplicationProvider;
 
-import com.github.jameshnsears.quoteunquote.database.DatabaseRepository;
+import com.github.jameshnsears.quoteunquote.QuoteUnquoteModelDouble;
 import com.github.jameshnsears.quoteunquote.database.history.AbstractDatabaseHistory;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
@@ -12,24 +13,27 @@ import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.robolectric.shadows.util.SQLiteLibraryLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class DatabaseTestHelper {
+public class DatabaseHelper {
     protected static final int WIDGET_ID = 1;
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
     @Rule
     public CountingTaskExecutorRule countingTaskExecutorRule = new CountingTaskExecutorRule();
-    protected QuoteUnquoteModelFake quoteUnquoteModel;
+    protected QuoteUnquoteModelDouble quoteUnquoteModel;
 
     @Before
     public void setUp() {
+        SQLiteLibraryLoader.load();
+
         ApplicationProvider.getApplicationContext().deleteDatabase(AbstractDatabaseHistory.DATABASE_NAME);
-        quoteUnquoteModel = new QuoteUnquoteModelFake();
+        quoteUnquoteModel = new QuoteUnquoteModelDouble();
     }
 
     @After

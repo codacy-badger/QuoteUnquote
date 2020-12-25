@@ -18,15 +18,18 @@ import java.util.concurrent.Future;
 
 import io.reactivex.Single;
 
-public final class DatabaseRepositoryFake extends DatabaseRepository {
-    private static final String LOG_TAG = DatabaseRepositoryFake.class.getSimpleName();
+//import com.guness.robolectric.sqlite.library.SQLiteLibraryLoader;
 
-    public DatabaseRepositoryFake() {
-        super();
+public final class DatabaseRepositoryDouble extends DatabaseRepository {
+    private static final String LOG_TAG = DatabaseRepositoryDouble.class.getSimpleName();
+
+    public DatabaseRepositoryDouble() {
+        //SQLiteLibraryLoader.load();
 
         abstractDatabaseQuotation = Room.inMemoryDatabaseBuilder(
                 ApplicationProvider.getApplicationContext(),
                 AbstractDatabaseQuotation.class)
+                .allowMainThreadQueries()
                 .build();
 
         quotationDAO = abstractDatabaseQuotation.quotationsDAO();
@@ -34,6 +37,7 @@ public final class DatabaseRepositoryFake extends DatabaseRepository {
         abstractDatabaseHistory = Room.inMemoryDatabaseBuilder(
                 ApplicationProvider.getApplicationContext(),
                 AbstractDatabaseHistory.class)
+                .allowMainThreadQueries()
                 .build();
 
         previousDAO = abstractDatabaseHistory.contentDAO();
@@ -73,5 +77,10 @@ public final class DatabaseRepositoryFake extends DatabaseRepository {
     @NonNull
     public QuotationEntity getQuotation(@NonNull final String digest) {
         return quotationDAO.getQuotation(digest);
+    }
+
+    public void close() {
+        abstractDatabaseQuotation.close();
+        abstractDatabaseHistory.close();
     }
 }

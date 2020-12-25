@@ -2,7 +2,7 @@
   <configuration default="false" name="integrationTest.All Tests" type="AndroidJUnit" factoryName="Android JUnit">
     <module name="QuoteUnquote.app" />
     <useClassPathOnly />
-    <option name="PACKAGE_NAME" value="com.github.jameshnsears.quoteunquote" />
+    <option name="PACKAGE_NAME" value="com.github.jameshnsears.quoteunquote.configure" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />

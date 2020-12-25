@@ -9,7 +9,7 @@ class IntentHelper {
         const val WIDGET_ID = -1
 
         fun getIntent(): Intent {
-            val intent = Intent(ApplicationProvider.getApplicationContext(), ActivityConfigureDouble::class.java)
+            val intent = Intent(ApplicationProvider.getApplicationContext(), ConfigureActivityDouble::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, WIDGET_ID)
             return intent
         }

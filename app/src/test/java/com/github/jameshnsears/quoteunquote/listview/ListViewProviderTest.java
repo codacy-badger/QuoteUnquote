@@ -7,16 +7,16 @@ import android.os.Build;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.jameshnsears.quoteunquote.DatabaseTestHelper;
-import com.github.jameshnsears.quoteunquote.configure.fragment.content.PreferenceContent;
+import com.github.jameshnsears.quoteunquote.configure.fragment.content.ContentPreferences;
+import com.github.jameshnsears.quoteunquote.database.DatabaseHelper;
 import com.github.jameshnsears.quoteunquote.utils.ContentSelection;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(AndroidJUnit4.class)
 @Config(sdk = Build.VERSION_CODES.P)
-public class ListViewProviderTest extends DatabaseTestHelper {
+public class ListViewProviderTest extends DatabaseHelper {
     @Test
     public void listView() {
         insertTestDataSet01();
@@ -35,17 +35,17 @@ public class ListViewProviderTest extends DatabaseTestHelper {
 
         final Context mockContext = mock(Context.class);
 
-        final ListViewProvider listViewProviderSpy = spy(new ListViewProvider(mockContext, intent));
-        doReturn(this.quoteUnquoteModel).when(listViewProviderSpy).getQuoteUnquoteModel(mockContext);
+        final ListViewProvider listViewProviderTestSpy = spy(new ListViewProvider(mockContext, intent));
+        doReturn(this.quoteUnquoteModel).when(listViewProviderTestSpy).getQuoteUnquoteModel(mockContext);
 
-        final PreferenceContent preferenceAppearanceSpy = spy(new PreferenceContent(-1, mockContext));
+        final ContentPreferences preferenceAppearanceSpy = spy(new ContentPreferences(-1, mockContext));
         doReturn(ContentSelection.ALL).when(preferenceAppearanceSpy).getContentSelection();
-        listViewProviderSpy.preferenceContent = preferenceAppearanceSpy;
+        listViewProviderTestSpy.contentPreferences = preferenceAppearanceSpy;
 
-        listViewProviderSpy.onCreate();
-        assertEquals("", 0, listViewProviderSpy.getCount());
+        listViewProviderTestSpy.onCreate();
+        Assert.assertEquals("", 0, listViewProviderTestSpy.getCount());
 
-        listViewProviderSpy.onDataSetChanged();
-        assertEquals("", 1, listViewProviderSpy.getCount());
+        listViewProviderTestSpy.onDataSetChanged();
+        Assert.assertEquals("", 1, listViewProviderTestSpy.getCount());
     }
 }
