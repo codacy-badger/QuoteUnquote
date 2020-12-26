@@ -47,9 +47,9 @@ public class ContentFragment extends FragmentCommon {
     @Nullable
     public FragmentContentBinding fragmentContentBinding;
     public volatile CountDownLatch disposableCompletedAllCount = new CountDownLatch(1);
-    public int countSearchResults;
     public volatile CountDownLatch disposableCompletedSetAuthor = new CountDownLatch(1);
     public volatile CountDownLatch disposableCompletedSetFavouriteCount = new CountDownLatch(1);
+    public int countSearchResults;
     @Nullable
     protected ContentViewModel contentViewModel;
 
@@ -132,7 +132,21 @@ public class ContentFragment extends FragmentCommon {
         fragmentContentBinding.textViewLocalCodeValue.setText(localCode);
     }
 
+    // TODO stop rx part of setSerch in tests
     protected void setSearch() {
+        setSearchObserver();
+
+        final String editTextKeywords = contentPreferences.getContentSelectionSearchText();
+
+        if (editTextKeywords != null && editTextKeywords.length() > 0) {
+            final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
+            properties.put("Text", editTextKeywords);
+            AuditEventHelper.auditEvent("SEARCH", properties);
+            fragmentContentBinding.editTextSearchText.setText(editTextKeywords);
+        }
+    }
+
+    protected void setSearchObserver() {
         disposableObserver = new DisposableObserver<Integer>() {
             @Override
             public void onNext(@NonNull final Integer value) {
@@ -172,15 +186,6 @@ public class ContentFragment extends FragmentCommon {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(disposableObserver);
-
-        final String editTextKeywords = contentPreferences.getContentSelectionSearchText();
-
-        if (editTextKeywords != null && editTextKeywords.length() > 0) {
-            final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
-            properties.put("Text", editTextKeywords);
-            AuditEventHelper.auditEvent("SEARCH", properties);
-            fragmentContentBinding.editTextSearchText.setText(editTextKeywords);
-        }
     }
 
     @Override

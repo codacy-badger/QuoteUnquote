@@ -5,6 +5,8 @@ import android.view.View
 import com.github.jameshnsears.quoteunquote.configure.IntentHelper
 
 class ContentFragmentDouble(widgetId: Int = IntentHelper.WIDGET_ID) : ContentFragment(widgetId) {
+    // invoke rxjava usage through junit tests, else https://github.com/robolectric/robolectric/issues/4947
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         createListenerRadioGroup()
         createListenerAuthor()
@@ -14,8 +16,10 @@ class ContentFragmentDouble(widgetId: Int = IntentHelper.WIDGET_ID) : ContentFra
         setSelection()
 
         enableFavouriteButtonReceive(true)
+    }
 
-        // invoke rxjava usage through junit tests, else https://github.com/robolectric/robolectric/issues/4947
+    override fun setSearchObserver() {
+        // for junit tests don't invoke observer
     }
 
     companion object {
