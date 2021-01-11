@@ -24,7 +24,7 @@ jobs:
 
   job_lintManifestTestDebug:
     name: lintManifestTestDebug
-      needs: job_super-linter
+    needs: job_super-linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -37,7 +37,7 @@ jobs:
 
   job_lintGooglePlayDebug:
     name: lintGooglePlayDebug
-      needs: job_super-linter
+    needs: job_super-linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -50,7 +50,7 @@ jobs:
 
   job_lintFdroidDebug:
     name: lintFdroidDebug
-      needs: job_super-linter
+    needs: job_super-linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -75,7 +75,7 @@ jobs:
 
   job_connectedGoogleplayDebugAndroidTest:
     name: connectedGoogleplayDebugAndroidTest
-      needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug]
+    needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug]
     runs-on: macos-latest
     strategy:
       matrix:
@@ -103,7 +103,7 @@ jobs:
 
   job_connectedFdroidDebugAndroidTest:
     name: connectedFdroidDebugAndroidTest
-      needs: connectedGoogleplayDebugAndroidTest
+    needs: connectedGoogleplayDebugAndroidTest
     runs-on: macos-latest
     strategy:
       matrix:
