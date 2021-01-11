@@ -103,7 +103,7 @@ jobs:
 
   job_connectedFdroidDebugAndroidTest:
     name: connectedFdroidDebugAndroidTest
-    needs: connectedGoogleplayDebugAndroidTest
+    needs: job_connectedGoogleplayDebugAndroidTest
     runs-on: macos-latest
     strategy:
       matrix:
