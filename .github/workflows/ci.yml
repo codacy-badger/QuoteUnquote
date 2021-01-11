@@ -1,9 +1,10 @@
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
-
-name: QuoteUnquote CI
+name: CI
 on:
   push:
+    branches: [master, development, current]
   pull_request:
+    branches: [master, development, current]
 
 jobs:
   job_super-linter:
