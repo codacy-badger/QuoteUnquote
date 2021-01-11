@@ -72,9 +72,21 @@ jobs:
           set -x
           ./gradlew clean ktlint
 
+  job_datekt:
+    name: datekt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean datekt
+
   job_connectedGoogleplayDebugAndroidTest:
     name: connectedGoogleplayDebugAndroidTest
-    needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug, job_ktlint]
+    needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug, job_datekt]
     runs-on: macos-latest
     strategy:
       matrix:
