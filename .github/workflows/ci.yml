@@ -21,7 +21,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
   job_ktlint:
     name: ktlint
     runs-on: ubuntu-latest
@@ -41,7 +40,7 @@ jobs:
 
   job_datekt:
     name: datekt
-    needs: ktlint
+    needs: job_ktlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
