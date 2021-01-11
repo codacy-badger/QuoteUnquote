@@ -14,6 +14,9 @@ import com.github.jameshnsears.quoteunquote.BuildConfig;
         entities = {QuotationEntity.class},
         version = 1)
 public abstract class AbstractDatabaseQuotation extends RoomDatabase {
+    @NonNull
+    public static String DATABASE_NAME = "quotations.db.dev";
+
     @Nullable
     private static AbstractDatabaseQuotation quotationDatabase;
 
@@ -24,6 +27,8 @@ public abstract class AbstractDatabaseQuotation extends RoomDatabase {
         if (BuildConfig.USE_PROD_DB) {
             dbName = "quotations.db.prod";
         }
+
+        DATABASE_NAME = dbName;
 
         synchronized (AbstractDatabaseQuotation.class) {
             if (quotationDatabase == null) {

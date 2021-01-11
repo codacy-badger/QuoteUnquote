@@ -26,7 +26,7 @@ public class QuoteUnquoteModel {
     @NonNull
     public final ExecutorService executorService = Executors.newFixedThreadPool(3);
     @Nullable
-    protected DatabaseRepository databaseRepository;
+    public DatabaseRepository databaseRepository;
     @Nullable
     protected Context context;
 
@@ -35,7 +35,11 @@ public class QuoteUnquoteModel {
 
     public QuoteUnquoteModel(@NonNull final Context widgetContext) {
         this.context = widgetContext;
-        databaseRepository = new DatabaseRepository(widgetContext);
+        databaseRepository = getDatabaseRepository();
+    }
+
+    public DatabaseRepository getDatabaseRepository() {
+        return DatabaseRepository.getInstance(this.context);
     }
 
     public void shutdown() {
@@ -48,12 +52,9 @@ public class QuoteUnquoteModel {
         logWidgetId(widgetId);
 
         final Future future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + widgetId);
+            QuotationEntity defaultQuotation = databaseRepository.getQuotation(DatabaseRepository.DEFAULT_QUOTATION_DIGEST);
 
-            databaseRepository.markAsPrevious(
-                    widgetId,
-                    ContentSelection.ALL,
-                    databaseRepository.getQuotation(DatabaseRepository.DEFAULT_QUOTATION_DIGEST).digest);
+            databaseRepository.markAsPrevious(widgetId, ContentSelection.ALL, defaultQuotation.digest);
         });
 
         try {
@@ -77,8 +78,6 @@ public class QuoteUnquoteModel {
         Timber.d(logMsg);
 
         final Future<Boolean> future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + logMsg);
-
             try {
                 QuotationEntity quotationEntity = null;
 
@@ -135,8 +134,6 @@ public class QuoteUnquoteModel {
         Timber.d(logMsg);
 
         final Future<QuotationEntity> future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + logMsg);
-
             // check for first time use
             try {
                 switch (contentSelection) {
@@ -204,8 +201,6 @@ public class QuoteUnquoteModel {
         Timber.d(logMsg);
 
         final Future future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + logMsg);
-
             if (!isFavourite(widgetId, digest)) {
                 databaseRepository.markAsFavourite(digest);
 
@@ -248,10 +243,7 @@ public class QuoteUnquoteModel {
     public boolean isFavourite(final int widgetId, @NonNull final String digest) {
         final String logMsg = String.format(Locale.ENGLISH, "%d: digest=%s", widgetId, digest);
 
-        final Future<Integer> future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + logMsg);
-            return databaseRepository.countIsFavourite(digest);
-        });
+        final Future<Integer> future = executorService.submit(() -> databaseRepository.countIsFavourite(digest));
 
         boolean isFavourite = false;
         try {
@@ -271,7 +263,6 @@ public class QuoteUnquoteModel {
         logWidgetId(widgetId);
 
         final Future future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + widgetId);
             databaseRepository.deletePrevious(widgetId);
         });
 
@@ -303,7 +294,6 @@ public class QuoteUnquoteModel {
         Timber.d(logMsg);
 
         final Future future = executorService.submit(() -> {
-            Thread.currentThread().setName(Thread.currentThread().getId() + ": " + logMsg);
             databaseRepository.deletePrevious(widgetId, contentSelection);
         });
 

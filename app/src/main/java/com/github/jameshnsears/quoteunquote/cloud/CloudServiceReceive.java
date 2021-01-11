@@ -67,7 +67,7 @@ public final class CloudServiceReceive extends Service {
                         handler.post(() -> ToastHelper.makeToast(
                                 context, context.getString(R.string.fragment_content_favourites_share_received), Toast.LENGTH_LONG));
 
-                        final DatabaseRepository databaseRepository = new DatabaseRepository(context);
+                        final DatabaseRepository databaseRepository = DatabaseRepository.getInstance(context);
                         favouritesReceived.forEach(databaseRepository::markAsFavourite);
 
                         if (contentFragment != null) {

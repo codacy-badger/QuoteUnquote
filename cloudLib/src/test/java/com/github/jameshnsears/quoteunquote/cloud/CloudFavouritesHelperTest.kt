@@ -19,8 +19,8 @@ class CloudFavouritesHelperTest {
 
     @Test
     fun `send a save request and then a receive request`() {
-        CloudFavouritesHelper.sendRequest(RequestHelper.sendRequest())
+        CloudFavouritesHelper.sendRequest(RequestTestHelper.sendRequest())
 
-        assertTrue(CloudFavouritesHelper.receiveRequest(RequestHelper.code).contains(RequestHelper.code))
+        assertTrue(CloudFavouritesHelper.receiveRequest(RequestTestHelper.code).contains(RequestTestHelper.code))
     }
 }

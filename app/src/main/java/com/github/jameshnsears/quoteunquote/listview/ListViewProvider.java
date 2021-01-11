@@ -72,7 +72,7 @@ class ListViewProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @NonNull
     public QuoteUnquoteModel getQuoteUnquoteModel(@NonNull final Context listViewContext) {
-        return quoteUnquoteWidget.getQuoteUnquoteModelInstance(listViewContext);
+        return new QuoteUnquoteModel(listViewContext);
     }
 
     @Override

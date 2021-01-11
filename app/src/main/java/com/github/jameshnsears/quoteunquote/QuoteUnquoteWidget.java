@@ -64,7 +64,7 @@ public final class QuoteUnquoteWidget extends AppWidgetProvider {
     }
 
     @NonNull
-    public synchronized QuoteUnquoteModel getQuoteUnquoteModelInstance(@NonNull final Context context) {
+    private synchronized QuoteUnquoteModel getQuoteUnquoteModelInstance(@NonNull final Context context) {
         if (quoteUnquoteModel == null) {
             quoteUnquoteModel = new QuoteUnquoteModel(context);
         }

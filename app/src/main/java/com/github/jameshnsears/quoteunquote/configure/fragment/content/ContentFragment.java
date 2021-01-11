@@ -46,9 +46,9 @@ public class ContentFragment extends FragmentCommon {
     private final CompositeDisposable disposables = new CompositeDisposable();
     @Nullable
     public FragmentContentBinding fragmentContentBinding;
-    public volatile CountDownLatch disposableCompletedAllCount = new CountDownLatch(1);
-    public volatile CountDownLatch disposableCompletedSetAuthor = new CountDownLatch(1);
-    public volatile CountDownLatch disposableCompletedSetFavouriteCount = new CountDownLatch(1);
+    public volatile CountDownLatch latchAllCount = new CountDownLatch(1);
+    public volatile CountDownLatch latchAuthor = new CountDownLatch(1);
+    public volatile CountDownLatch latchFavouriteCount = new CountDownLatch(1);
     public int countSearchResults;
     @Nullable
     protected ContentViewModel contentViewModel;
@@ -63,7 +63,7 @@ public class ContentFragment extends FragmentCommon {
     @Nullable
     private DisposableObserver<Integer> disposableObserver;
     @Nullable
-    private ContentCloud contentCloud;
+    protected ContentCloud contentCloud;
 
     @NonNull
     public static ContentFragment newInstance(final int widgetId) {
@@ -75,8 +75,13 @@ public class ContentFragment extends FragmentCommon {
     @Override
     public void onCreate(@NonNull final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contentViewModel = new ViewModelProvider(this).get(ContentViewModel.class);
+        contentViewModel = getContentViewModel();
         contentCloud = new ContentCloud();
+    }
+
+    @NonNull
+    public ContentViewModel getContentViewModel() {
+        return new ViewModelProvider(this).get(ContentViewModel.class);
     }
 
     @Override
@@ -107,10 +112,8 @@ public class ContentFragment extends FragmentCommon {
     }
 
     public void shutdown() {
-        if (disposables != null) {
-            disposables.clear();
-            disposables.dispose();
-        }
+        disposables.clear();
+        disposables.dispose();
 
         if (disposableObserver != null) {
             disposableObserver.dispose();
@@ -132,7 +135,6 @@ public class ContentFragment extends FragmentCommon {
         fragmentContentBinding.textViewLocalCodeValue.setText(localCode);
     }
 
-    // TODO stop rx part of setSerch in tests
     protected void setSearch() {
         setSearchObserver();
 
@@ -217,7 +219,8 @@ public class ContentFragment extends FragmentCommon {
                             public void onSuccess(@NonNull final Integer value) {
                                 fragmentContentBinding.radioButtonAll.setText(
                                         getResources().getString(R.string.fragment_content_all, value));
-                                disposableCompletedAllCount.countDown();
+
+                                latchAllCount.countDown();
                             }
 
                             @Override
@@ -246,7 +249,7 @@ public class ContentFragment extends FragmentCommon {
 
                                 setAuthorName(authors.get(0));
 
-                                disposableCompletedSetAuthor.countDown();
+                                latchAuthor.countDown();
                             }
 
                             @Override
@@ -295,7 +298,7 @@ public class ContentFragment extends FragmentCommon {
                                 fragmentContentBinding.radioButtonFavourites.setText(
                                         getResources().getString(R.string.fragment_content_favourites, value));
 
-                                disposableCompletedSetFavouriteCount.countDown();
+                                latchFavouriteCount.countDown();
                             }
 
                             @Override

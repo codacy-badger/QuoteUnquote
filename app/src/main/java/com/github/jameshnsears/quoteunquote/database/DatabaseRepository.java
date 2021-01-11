@@ -26,6 +26,8 @@ import io.reactivex.Single;
 import timber.log.Timber;
 
 public class DatabaseRepository {
+    private static DatabaseRepository databaseRepository;
+
     @NonNull
     public static final String DEFAULT_QUOTATION_DIGEST = "1624c314";
     @NonNull
@@ -43,11 +45,25 @@ public class DatabaseRepository {
     @Nullable
     protected ReportedDAO reportedDAO;
 
-    public DatabaseRepository() {
+    protected DatabaseRepository() {
+        //
     }
 
-    public DatabaseRepository(@NonNull final Context context) {
-        open(context);
+    private DatabaseRepository(@NonNull final Context context) {
+        abstractDatabaseQuotation = AbstractDatabaseQuotation.getDatabase(context);
+        quotationDAO = abstractDatabaseQuotation.quotationsDAO();
+        abstractDatabaseHistory = AbstractDatabaseHistory.getDatabase(context);
+        previousDAO = abstractDatabaseHistory.contentDAO();
+        favouriteDAO = abstractDatabaseHistory.favouritesDAO();
+        reportedDAO = abstractDatabaseHistory.reportedDAO();
+    }
+
+    public static synchronized DatabaseRepository getInstance(@NonNull final Context context) {
+        if (databaseRepository == null) {
+            databaseRepository = new DatabaseRepository(context);
+        }
+
+        return databaseRepository;
     }
 
     public void close() {
@@ -58,15 +74,8 @@ public class DatabaseRepository {
         if (abstractDatabaseHistory.isOpen()) {
             abstractDatabaseHistory.close();
         }
-    }
 
-    public void open(@NonNull Context context) {
-        abstractDatabaseQuotation = AbstractDatabaseQuotation.getDatabase(context);
-        quotationDAO = abstractDatabaseQuotation.quotationsDAO();
-        abstractDatabaseHistory = AbstractDatabaseHistory.getDatabase(context);
-        previousDAO = abstractDatabaseHistory.contentDAO();
-        favouriteDAO = abstractDatabaseHistory.favouritesDAO();
-        reportedDAO = abstractDatabaseHistory.reportedDAO();
+        databaseRepository = null;
     }
 
     public Single<Integer> countAll() {

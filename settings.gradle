@@ -1,4 +1,3 @@
-include ':robolectricSqliteLib'
 include ':utilsLib'
 include ':cloudLib'
 include ':app'

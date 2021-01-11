@@ -2,7 +2,6 @@ package com.github.jameshnsears.quoteunquote.report;
 
 
 import android.appwidget.AppWidgetManager;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.jameshnsears.quoteunquote.QuoteUnquoteWidget;
+import com.github.jameshnsears.quoteunquote.QuoteUnquoteModel;
 import com.github.jameshnsears.quoteunquote.R;
 import com.github.jameshnsears.quoteunquote.configure.fragment.content.ContentPreferences;
 import com.github.jameshnsears.quoteunquote.database.quotation.QuotationEntity;
@@ -28,11 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import timber.log.Timber;
 
-public final class ReportActivity extends AppCompatActivity {
+public class ReportActivity extends AppCompatActivity {
     @Nullable
     private ActivityReportBinding activityReportBinding;
     @Nullable
-    private QuoteUnquoteWidget quoteUnquoteWidget;
+    public QuoteUnquoteModel quoteUnquoteModel;         // TODO rm replace ContentViewModel with QuoteUnquoteModel?
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
@@ -47,23 +46,24 @@ public final class ReportActivity extends AppCompatActivity {
 
         activityReportBinding = null;
 
+        broadcastFinishIntent();
+        finish();
+    }
+
+    public void broadcastFinishIntent() {
         sendBroadcast(IntentFactoryHelper.createIntentAction(
                 this,
                 widgetId,
                 IntentFactoryHelper.ACTIVITY_FINISHED_REPORT));
 
         setResult(RESULT_OK, IntentFactoryHelper.createIntent(widgetId));
-        finish();
     }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        quoteUnquoteWidget = new QuoteUnquoteWidget();
-
-        final Intent intent = getIntent();
-        final Bundle extras = intent.getExtras();
+        final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             widgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -73,12 +73,13 @@ public final class ReportActivity extends AppCompatActivity {
             finish();
         }
 
+        quoteUnquoteModel = getQuoteUnquoteModel();
+
         if (hasQuotationAlreadyBeenReported()) {
             finish();
         }
 
         activityReportBinding = ActivityReportBinding.inflate(getLayoutInflater());
-
         final View view = activityReportBinding.getRoot();
 
         this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -91,14 +92,18 @@ public final class ReportActivity extends AppCompatActivity {
         activityReportBinding.buttonOK.setOnClickListener(view1 -> {
             AuditEventHelper.auditEvent("REPORT", getAuditProperties());
 
-            quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).markAsReported(widgetId);
+            quoteUnquoteModel.markAsReported(widgetId);
 
             onBackPressed();
         });
     }
 
+    protected QuoteUnquoteModel getQuoteUnquoteModel() {
+        return new QuoteUnquoteModel(getApplicationContext());
+    }
+
     public boolean hasQuotationAlreadyBeenReported() {
-        if (quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).isReported(widgetId)) {
+        if (quoteUnquoteModel.isReported(widgetId)) {
             ToastHelper.makeToast(getApplicationContext(), getApplicationContext().getString(R.string.activity_report_warning), Toast.LENGTH_SHORT);
             return true;
         }
@@ -111,8 +116,7 @@ public final class ReportActivity extends AppCompatActivity {
         final ConcurrentHashMap<String, String> properties = new ConcurrentHashMap<>();
 
         final ContentPreferences contentPreferences = new ContentPreferences(widgetId, getApplicationContext());
-        final QuotationEntity quotationToReport
-                = quoteUnquoteWidget.getQuoteUnquoteModelInstance(getApplicationContext()).getNext(widgetId, contentPreferences.getContentSelection());
+        final QuotationEntity quotationToReport = quoteUnquoteModel.getNext(widgetId, contentPreferences.getContentSelection());
 
         properties.put("Report", "digest="
                 + quotationToReport.digest

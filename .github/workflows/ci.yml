@@ -1,0 +1,116 @@
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
+name: QuoteUnquote CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  job_super-linter:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  job_lintManifestTestDebug:
+    name: lintManifestTestDebug
+      needs: job_super-linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean lintManifestTestDebug
+
+  job_lintGooglePlayDebug:
+    name: lintGooglePlayDebug
+      needs: job_super-linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean lintGooglePlayDebug
+
+  job_lintFdroidDebug:
+    name: lintFdroidDebug
+      needs: job_super-linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean lintFdroidDebug
+
+  job_connectedGoogleplayDebugAndroidTest:
+    name: connectedGoogleplayDebugAndroidTest
+      needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug]
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [24, 29]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: ${GOOGLE_SERVICES}
+        run: |
+          set -x
+          pwd
+          touch local.properties
+          echo "${GOOGLE_SERVICES}" | base64 --decode > app/google-services.json
+          ls -al
+
+      - name: androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{matrix.api-level}}
+          target: default
+          script: ./gradlew connectedGoogleplayDebugAndroidTest --stacktrace
+
+  job_connectedFdroidDebugAndroidTest:
+    name: connectedFdroidDebugAndroidTest
+      needs: connectedGoogleplayDebugAndroidTest
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [24, 29]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: ${GOOGLE_SERVICES}
+        run: |
+          set -x
+          pwd
+          touch local.properties
+          echo "${GOOGLE_SERVICES}" | base64 --decode > app/google-services.json
+          ls -al
+
+      - name: androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{matrix.api-level}}
+          target: default
+          script: ./gradlew connectedGoogleplayDebugAndroidTest --stacktrace
