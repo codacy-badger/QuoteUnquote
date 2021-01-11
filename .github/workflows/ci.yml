@@ -21,6 +21,42 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+
+  job_ktlint:
+    name: ktlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: prep env.
+        run: |
+          set -x
+          echo "$LOCAL_PROPERTIES" > local.properties
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean ktlint
+
+  job_datekt:
+    name: datekt
+    needs: ktlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: prep env.
+        run: |
+          set -x
+          echo "$LOCAL_PROPERTIES" > local.properties
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean datekt
+
   job_lintManifestTestDebug:
     name: lintManifestTestDebug
     needs: job_super-linter
@@ -28,6 +64,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+
+      - name: prep env.
+        run: |
+          set -x
+          echo "$LOCAL_PROPERTIES" > local.properties
 
       - name: gradlew
         run: |
@@ -42,6 +83,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: prep env.
+        run: |
+          set -x
+          echo "$LOCAL_PROPERTIES" > local.properties
+
       - name: gradlew
         run: |
           set -x
@@ -55,34 +101,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: prep env.
+        run: |
+          set -x
+          echo "$LOCAL_PROPERTIES" > local.properties
+
       - name: gradlew
         run: |
           set -x
           ./gradlew clean lintFdroidDebug
-
-  job_ktlint:
-    name: ktlint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: gradlew
-        run: |
-          set -x
-          ./gradlew clean ktlint
-
-  job_datekt:
-    name: datekt
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: gradlew
-        run: |
-          set -x
-          ./gradlew clean datekt
 
   job_connectedGoogleplayDebugAndroidTest:
     name: connectedGoogleplayDebugAndroidTest
@@ -97,13 +124,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ${GOOGLE_SERVICES}
+      - name: prep env.
         run: |
           set -x
-          pwd
-          touch local.properties
-          echo "${GOOGLE_SERVICES}" | base64 --decode > app/google-services.json
-          ls -al
+          echo "$LOCAL_PROPERTIES" > local.properties
 
       - name: androidTest
         uses: reactivecircus/android-emulator-runner@v2
@@ -128,13 +152,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ${GOOGLE_SERVICES}
+      - name: prep env.
         run: |
           set -x
-          pwd
-          touch local.properties
-          echo "${GOOGLE_SERVICES}" | base64 --decode > app/google-services.json
-          ls -al
+          echo "$LOCAL_PROPERTIES" > local.properties
 
       - name: androidTest
         uses: reactivecircus/android-emulator-runner@v2
