@@ -74,7 +74,7 @@ jobs:
 
   job_connectedGoogleplayDebugAndroidTest:
     name: connectedGoogleplayDebugAndroidTest
-    needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug, ktlint]
+    needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug, job_ktlint]
     runs-on: macos-latest
     strategy:
       matrix:
