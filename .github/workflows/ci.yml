@@ -59,6 +59,18 @@ jobs:
           set -x
           ./gradlew clean lintFdroidDebug
 
+  job_ktlint:
+    name: ktlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout
+
+      - name: gradlew
+        run: |
+          set -x
+          ./gradlew clean ktlint
+
   job_connectedGoogleplayDebugAndroidTest:
     name: connectedGoogleplayDebugAndroidTest
       needs: [job_lintManifestTestDebug, job_lintGooglePlayDebug, job_lintFdroidDebug]
